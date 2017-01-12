@@ -37,13 +37,14 @@ public class MainController extends Controller implements ChatClientListener {
         PropertiesManager.getInstance().setFileName("options");
         String serverIpAddress = PropertiesManager.getInstance().getProperty("ipAddress");
         int serverPort = Integer.parseInt(PropertiesManager.getInstance().getProperty("port"));
+        String username = PropertiesManager.getInstance().getProperty("username");
 
-        connectToServer(serverIpAddress, serverPort);
+        connectToServer(serverIpAddress, serverPort, username);
     }
 
-    private void connectToServer(String ipAddress, int port) {
+    private void connectToServer(String ipAddress, int port, String username) {
         try {
-            client = new ChatClient(ipAddress, port);
+            client = new ChatClient(ipAddress, port, username);
             client.addListener(this);
             client.sendAvailableUsersRequest();
         } catch (IOException e) {
@@ -65,12 +66,10 @@ public class MainController extends Controller implements ChatClientListener {
                 String messageHistory = outputTextField.getText();
                 outputTextField.setText(messageHistory + receivedChatMessage.toString());
                 break;
+
             case AVAILABLE_USERS:
                 List<User> users = (ArrayList<User>) message.getPayload();
                 populatePhoneBook(users);
-                break;
-            case CONNECTION:
-                client.sendAvailableUsersRequest();
                 break;
         }
     }

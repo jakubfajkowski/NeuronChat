@@ -6,7 +6,9 @@ import common.util.User;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ChatServer extends Server {
@@ -23,10 +25,15 @@ public class ChatServer extends Server {
 
         switch (message.getClientMessageMode()) {
             case AVAILABLE_USERS:
-                message.setPayload((Serializable) userSessionIdMap.values());
+                List<User> users = new ArrayList<>();
+                users.addAll(userSessionIdMap.keySet());
+                message.setPayload((Serializable) users);
                 break;
             case CONNECTION:
-
+                User user = message.getAddressee();
+                SessionId sessionId = (SessionId) message.getPayload();
+                userSessionIdMap.put(user, sessionId);
+                break;
         }
 
         send(addresseeSessionId, message);

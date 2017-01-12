@@ -65,9 +65,9 @@ public abstract class Server {
         messageHandling.start();
     }
 
-    protected abstract void handleMessage(ClientMessage message);
+    abstract void handleMessage(ClientMessage message);
 
-    protected void send(SessionId sessionId, ClientMessage message) {
+    void send(SessionId sessionId, ClientMessage message) {
         Session session = sessionMap.get(sessionId);
 
         if (session != null) {

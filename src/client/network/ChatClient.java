@@ -2,6 +2,7 @@ package client.network;
 
 import common.network.ClientMessage;
 import common.network.ClientMessageMode;
+import common.network.SessionId;
 import common.util.User;
 
 import java.io.IOException;
@@ -20,9 +21,20 @@ public class ChatClient extends Client {
 
     @Override
     protected void receiveMessage(ClientMessage message) {
-        for (ChatClientListener c: chatClientListeners) {
-            c.handleMessage(message);
+        switch (message.getClientMessageMode()) {
+            case CONNECTION:
+                SessionId sessionId = (SessionId) message.getPayload();
+                sendUsername(sessionId);
+                break;
+
+            default:
+                for (ChatClientListener c: chatClientListeners) {
+                    c.handleMessage(message);
+                }
+                break;
         }
+
+
     }
 
     public void addListener(ChatClientListener chatClientListener) {
@@ -34,6 +46,15 @@ public class ChatClient extends Client {
                 ClientMessageMode.AVAILABLE_USERS,
                 user,
                 null
+        );
+        send(messageToSend);
+    }
+
+    public void sendUsername(SessionId sessionId) {
+        ClientMessage messageToSend = new ClientMessage(
+                ClientMessageMode.CONNECTION,
+                user,
+                sessionId
         );
         send(messageToSend);
     }
