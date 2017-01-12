@@ -5,32 +5,37 @@ import client.network.ChatClient;
 import common.util.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import common.network.ChatMessage;
 import common.network.ClientMessage;
 import client.network.ChatClientListener;
 import common.util.PropertiesManager;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.*;
 
 public class MainController extends Controller implements ChatClientListener {
     ChatClient client;
-    @FXML private ListView phoneBookNames;
+    User currentAddressee;
+
+    @FXML private ListView onlineUsersListView;
     @FXML private Tab conversationTab;
-    @FXML private TextArea outputTextField;
-    @FXML private TextArea inputTextField;
+    @FXML private TextArea outputTextArea;
+    @FXML private TextArea inputTextArea;
     @FXML private Button sendButton;
     @FXML private Tab encryptionTab;
     @FXML private Button negotiateButton;
     @FXML private TextArea logTextField;
     @FXML private TextArea matrixTextField;
+    @FXML private TextField serverAddressTextField;
+    @FXML private TextField serverPortTextField;
+    @FXML private TextField usernameTextField;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -44,18 +49,18 @@ public class MainController extends Controller implements ChatClientListener {
 
     private void connectToServer(String ipAddress, int port, String username) {
         try {
-            client = new ChatClient(ipAddress, port, username);
+            client = new ChatClient(ipAddress, port, new User(username));
             client.addListener(this);
             client.sendAvailableUsersRequest();
         } catch (IOException e) {
-            ErrorAlert.show(MessageFormat.format("Server: {0}:{1} is not available...", ipAddress, port));
+            ErrorAlert.show(String.format("Server: %s:%d is not available...", ipAddress, port));
         }
     }
 
     private void populatePhoneBook(List<User> users) {
         ObservableList<User> phoneBookRecords = FXCollections.observableArrayList(users);
 
-        phoneBookNames.setItems(phoneBookRecords);
+        onlineUsersListView.setItems(phoneBookRecords);
     }
 
     @Override
@@ -63,8 +68,8 @@ public class MainController extends Controller implements ChatClientListener {
         switch (message.getClientMessageMode()) {
             case MESSAGE:
                 ChatMessage receivedChatMessage = (ChatMessage)message.getPayload();
-                String messageHistory = outputTextField.getText();
-                outputTextField.setText(messageHistory + receivedChatMessage.toString());
+                String messageHistory = outputTextArea.getText();
+                outputTextArea.setText(messageHistory + receivedChatMessage.toString());
                 break;
 
             case AVAILABLE_USERS:
@@ -72,5 +77,29 @@ public class MainController extends Controller implements ChatClientListener {
                 populatePhoneBook(users);
                 break;
         }
+    }
+
+    public void onlineUsersListView_keyPressed(KeyEvent keyEvent) {
+        if(keyEvent.getCode() == KeyCode.ENTER) {
+            changeAddressee((User) onlineUsersListView.getSelectionModel().getSelectedItem());
+        }
+    }
+
+    public void onlineUsersListView_mouseClicked(MouseEvent mouseEvent) {
+        changeAddressee((User) onlineUsersListView.getSelectionModel().getSelectedItem());
+    }
+
+    private void changeAddressee(User addressee) {
+        currentAddressee = addressee;
+    }
+
+    public void sendButton_clicked(ActionEvent actionEvent) {
+        client.sendMessage(inputTextArea.getText(), currentAddressee);
+    }
+
+    public void negotiateButton_clicked(ActionEvent actionEvent) {
+    }
+
+    public void textField_keyPressed(KeyEvent keyEvent) {
     }
 }

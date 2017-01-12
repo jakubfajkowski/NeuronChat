@@ -1,5 +1,6 @@
 package client.network;
 
+import common.network.ChatMessage;
 import common.network.ClientMessage;
 import common.network.ClientMessageMode;
 import common.network.SessionId;
@@ -10,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatClient extends Client {
-    private User user;
+    private User localUser;
     private List<ChatClientListener> chatClientListeners;
 
-    public ChatClient(String ipAddress, int port, String username) throws IOException {
+    public ChatClient(String ipAddress, int port, User localUser) throws IOException {
         super(ipAddress, port);
-        this.user = new User(username);
+        this.localUser = localUser;
         this.chatClientListeners = new ArrayList<>();
     }
 
@@ -44,17 +45,26 @@ public class ChatClient extends Client {
     public void sendAvailableUsersRequest() {
         ClientMessage messageToSend = new ClientMessage(
                 ClientMessageMode.AVAILABLE_USERS,
-                user,
+                localUser,
                 null
         );
         send(messageToSend);
     }
 
-    public void sendUsername(SessionId sessionId) {
+    private void sendUsername(SessionId sessionId) {
         ClientMessage messageToSend = new ClientMessage(
                 ClientMessageMode.CONNECTION,
-                user,
+                localUser,
                 sessionId
+        );
+        send(messageToSend);
+    }
+
+    public void sendMessage(String chatMessageText, User addressee) {
+        ClientMessage messageToSend = new ClientMessage(
+                ClientMessageMode.MESSAGE,
+                addressee,
+                new ChatMessage(localUser, chatMessageText)
         );
         send(messageToSend);
     }

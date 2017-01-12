@@ -25,8 +25,8 @@ public class User implements Serializable {
         return username.hashCode();
     }
 
-    public String getUsername() {
-
+    @Override
+    public String toString() {
         return username;
     }
 }

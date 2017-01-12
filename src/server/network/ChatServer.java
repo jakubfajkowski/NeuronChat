@@ -24,9 +24,12 @@ public class ChatServer extends Server {
         SessionId addresseeSessionId = userSessionIdMap.get(message.getAddressee());
 
         switch (message.getClientMessageMode()) {
+            case MESSAGE:
+                send(addresseeSessionId, message);
             case AVAILABLE_USERS:
                 List<User> users = new ArrayList<>();
                 users.addAll(userSessionIdMap.keySet());
+                users.remove(message.getAddressee());
                 message.setPayload((Serializable) users);
                 break;
             case CONNECTION:

@@ -1,14 +1,16 @@
 package common.network;
 
+import common.util.User;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class ChatMessage implements Serializable {
-    private String sender;
+    private User sender;
     private String text;
     private Date dateCreated;
 
-    public ChatMessage(String sender, String text) {
+    public ChatMessage(User sender, String text) {
         this.sender = sender;
         this.text = text;
         dateCreated  = new Date();
