@@ -1,4 +1,4 @@
-package encryption;
+package common.encryption;
 
 import java.util.ArrayList;
 

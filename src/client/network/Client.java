@@ -1,11 +1,16 @@
-package network;
+package client.network;
+
+import common.network.ClientMessage;
+import common.network.Session;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Client {
+public abstract class Client {
     private Session serverSession;
     private LinkedBlockingQueue<ClientMessage> messages;
     private Socket socket;
@@ -28,7 +33,7 @@ public class Client {
             while(running){
                 try{
                     ClientMessage message = messages.take();
-                    handleMessage(message);
+                    receiveMessage(message);
                 }
                 catch(InterruptedException e){ e.printStackTrace(); }
             }
@@ -38,11 +43,9 @@ public class Client {
         messageHandlingThread.start();
     }
 
-    private void handleMessage(ClientMessage message) {
+    protected abstract void receiveMessage(ClientMessage message);
 
-    }
-
-    public void send(ClientMessage message) {
+    protected void send(ClientMessage message) {
         serverSession.write(message);
     }
 

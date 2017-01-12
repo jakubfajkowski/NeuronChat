@@ -1,4 +1,4 @@
-package encryption;
+package common.encryption;
 
 public class NeuralNetworkSecurity {
     public byte[] encrypt(byte[] input) {
