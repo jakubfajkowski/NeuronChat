@@ -2,6 +2,7 @@ package client.network;
 
 import common.network.ClientMessage;
 import common.network.Session;
+import common.util.Log;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

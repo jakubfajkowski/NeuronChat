@@ -21,6 +21,7 @@ public class PropertiesManager {
     }
 
     public String getProperty(String key){
+        load();
         return properties.getProperty(key);
     }
 
@@ -61,6 +62,5 @@ public class PropertiesManager {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
-        load();
     }
 }

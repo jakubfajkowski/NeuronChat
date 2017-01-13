@@ -1,29 +1,23 @@
 package server.network;
 
-import common.network.ClientMessage;
-import common.network.ClientMessageMode;
-import common.network.Session;
-import common.network.SessionId;
+import common.network.*;
 import common.util.Log;
 
-import java.io.Console;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public abstract class Server {
-    private Map<SessionId, Session> sessionMap;
+public abstract class Server implements SessionListener {
+    private List<Session> sessions;
     private LinkedBlockingQueue<ClientMessage> messages;
     private ServerSocket serverSocket;
     private Thread connectThread;
     private boolean running;
 
     public Server(int port) throws IOException {
-        sessionMap = new HashMap<>();
-
+        sessions = new ArrayList<>();
         messages = new LinkedBlockingQueue<>();
         serverSocket = new ServerSocket(port);
 
@@ -42,7 +36,10 @@ public abstract class Server {
 
                     Session session = new Session(s, messages);
                     SessionId sessionId = new SessionId();
-                    sessionMap.put(sessionId, session);
+                    session.setSessionId(sessionId);
+                    session.setSessionListener(this);
+                    sessions.add(session);
+                    Log.print(String.format("Session %s initialized", sessionId));
 
                     session.write(new ClientMessage(ClientMessageMode.CONNECTION, null, sessionId));
                 }
@@ -76,16 +73,16 @@ public abstract class Server {
     abstract void handleMessage(ClientMessage message);
 
     void send(SessionId sessionId, ClientMessage message) {
-        Session session = sessionMap.get(sessionId);
+        Optional<Session> session = getSessionBySessionId(sessionId);
 
-        if (session != null) {
-            session.write(message);
+        if (session.isPresent()) {
+            session.get().write(message);
             Log.print("Sent to " + message);
         }
     }
 
     protected void sendToAll(ClientMessage message) {
-        for (Session s: sessionMap.values()) {
+        for (Session s: sessions) {
             s.write(message);
             Log.print("Broadcast " + message);
         }
@@ -94,11 +91,20 @@ public abstract class Server {
     public void stop() {
         running = false;
 
-        for (Session s: sessionMap.values()) {
+        for (Session s: sessions) {
             s.dispose();
         }
 
         messages.clear();
+    }
+
+    private Optional<Session> getSessionBySessionId(SessionId sessionId) {
+        return sessions.stream().filter(session -> session.getSessionId().equals(sessionId)).findFirst();
+    }
+
+    protected void finalizeSession(Session session) {
+        sessions.remove(session);
+        Log.print(String.format("Session %s disposed", session.getSessionId()));
     }
 
     public Thread getConnectThread() {

@@ -2,6 +2,7 @@ package client.controller;
 
 import client.alert.ErrorAlert;
 import client.network.ChatClient;
+import common.util.Log;
 import common.util.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,26 +38,29 @@ public class MainController extends Controller implements ChatClientListener {
     @FXML private TextField serverAddressTextField;
     @FXML private TextField serverPortTextField;
     @FXML private TextField usernameTextField;
-
+    @FXML private Button saveButton;
+    @FXML private Button reconnectButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         PropertiesManager.getInstance().setFileName("options");
-        String serverIpAddress = PropertiesManager.getInstance().getProperty("ipAddress");
-        int serverPort = Integer.parseInt(PropertiesManager.getInstance().getProperty("port"));
-        String username = PropertiesManager.getInstance().getProperty("username");
 
-        connectToServer(serverIpAddress, serverPort, username);
+
+        connectToServer();
 
         setDefaultProperties();
     }
 
-    private void connectToServer(String ipAddress, int port, String username) {
+    private void connectToServer() {
+        String serverIpAddress = PropertiesManager.getInstance().getProperty("ipAddress");
+        int serverPort = Integer.parseInt(PropertiesManager.getInstance().getProperty("port"));
+        String username = PropertiesManager.getInstance().getProperty("username");
+
         try {
-            client = new ChatClient(ipAddress, port, new User(username));
+            client = new ChatClient(serverIpAddress, serverPort, new User(username));
             client.addListener(this);
         } catch (IOException e) {
-            ErrorAlert.show(String.format("Server: %s:%d is not available...", ipAddress, port));
+            ErrorAlert.show(String.format("Server: %s:%d is not available...", serverIpAddress, serverPort));
         }
     }
 
@@ -81,7 +85,6 @@ public class MainController extends Controller implements ChatClientListener {
                 break;
         }
     }
-
 
     private void setDefaultProperties(){
         serverAddressTextField.setText(PropertiesManager.getInstance().getProperty("ipAddress"));
@@ -110,7 +113,6 @@ public class MainController extends Controller implements ChatClientListener {
     public void negotiateButton_clicked(ActionEvent actionEvent) {
     }
 
-
     public void usernameTextField_mouseClicked(MouseEvent mouseEvent) {
         usernameTextField.clear();
     }
@@ -127,5 +129,14 @@ public class MainController extends Controller implements ChatClientListener {
         PropertiesManager.getInstance().setProperty("ipAddress", serverAddressTextField.getText());
         PropertiesManager.getInstance().setProperty("port", serverPortTextField.getText());
         PropertiesManager.getInstance().setProperty("username", usernameTextField.getText());
+    }
+
+    public void reconnectButton_clicked(ActionEvent actionEvent) {
+        try {
+            client.stop();
+            connectToServer();
+        } catch (IOException e) {
+            Log.print("Client exception: " + e.getMessage());
+        }
     }
 }

@@ -1,5 +1,7 @@
 package common.network;
 
+import common.util.Log;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,11 +9,13 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Session {
-    private boolean disposed;
+    private SessionId sessionId;
     private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private boolean disposed;
     private Thread messageReadingThread;
+    private SessionListener sessionListener;
 
     public Session(Socket socket, LinkedBlockingQueue<ClientMessage> messages) throws IOException {
         this.socket = socket;
@@ -42,7 +46,7 @@ public class Session {
         try {
             out.writeObject(message);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.print("Session writing exception: " + e.getMessage());
         }
     }
 
@@ -50,12 +54,26 @@ public class Session {
         disposed = true;
         try {
             socket.close();
+            if (sessionListener != null)
+                sessionListener.onSessionDisposed(this);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            Log.print("Session disposing exception: " + e.getMessage());
         }
     }
 
     public Thread getMessageReadingThread() {
         return messageReadingThread;
+    }
+
+    public SessionId getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(SessionId sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public void setSessionListener(SessionListener sessionListener) {
+        this.sessionListener = sessionListener;
     }
 }

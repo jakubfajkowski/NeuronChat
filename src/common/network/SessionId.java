@@ -20,4 +20,9 @@ public class SessionId implements Serializable {
     public int hashCode() {
         return uniqueId.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return uniqueId;
+    }
 }

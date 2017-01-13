@@ -1,7 +1,9 @@
 package server.network;
 
 import common.network.ClientMessage;
+import common.network.Session;
 import common.network.SessionId;
+import common.network.SessionListener;
 import common.util.Log;
 import common.util.User;
 
@@ -42,5 +44,11 @@ public class ChatServer extends Server {
         }
 
         send(addresseeSessionId, message);
+    }
+
+    @Override
+    public void onSessionDisposed(Session session) {
+        userSessionIdMap.values().remove(session.getSessionId());
+        finalizeSession(session);
     }
 }
