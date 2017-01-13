@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -14,7 +19,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.MainController">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -57,21 +62,26 @@
                         <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="183.0">
                            <children>
                               <Label text="Server Address:" />
-                              <TextField fx:id="serverAddressTextField" onKeyPressed="#textField_keyPressed" prefHeight="25.0" prefWidth="97.0" />
+                              <TextField fx:id="serverAddressTextField" onMouseClicked="#serverAddressTextField_mouseClicked" prefHeight="25.0" prefWidth="97.0" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="20.0" layoutY="20.0" prefHeight="41.0" prefWidth="183.0">
                            <children>
                               <Label text="Server Port:" />
-                              <TextField fx:id="serverPortTextField" onKeyPressed="#textField_keyPressed" prefHeight="25.0" prefWidth="97.0" />
+                              <TextField fx:id="serverPortTextField" onMouseClicked="#serverPortTextField_mouseClicked" prefHeight="25.0" prefWidth="97.0" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="20.0" layoutY="61.0" prefHeight="41.0" prefWidth="183.0">
                            <children>
                               <Label text="Username:" />
-                              <TextField fx:id="usernameTextField" onKeyPressed="#textField_keyPressed" prefHeight="25.0" prefWidth="97.0" />
+                              <TextField fx:id="usernameTextField" onMouseClicked="#usernameTextField_mouseClicked" prefHeight="25.0" prefWidth="97.0" />
                            </children>
                         </HBox>
+                        <Button fx:id="saveButton" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#saveButton_clicked" prefHeight="27.0" prefWidth="100.0" text="Save" textAlignment="CENTER" translateX="40.0" translateY="50.0" VBox.vgrow="NEVER">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Button>
                      </children>
                   </VBox>
                </content></TitledPane>

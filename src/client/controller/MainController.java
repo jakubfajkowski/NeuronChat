@@ -12,6 +12,7 @@ import common.network.ChatMessage;
 import common.network.ClientMessage;
 import client.network.ChatClientListener;
 import common.util.PropertiesManager;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -37,6 +38,7 @@ public class MainController extends Controller implements ChatClientListener {
     @FXML private TextField serverPortTextField;
     @FXML private TextField usernameTextField;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         PropertiesManager.getInstance().setFileName("options");
@@ -45,6 +47,8 @@ public class MainController extends Controller implements ChatClientListener {
         String username = PropertiesManager.getInstance().getProperty("username");
 
         connectToServer(serverIpAddress, serverPort, username);
+
+        setDefaultProperties();
     }
 
     private void connectToServer(String ipAddress, int port, String username) {
@@ -79,6 +83,13 @@ public class MainController extends Controller implements ChatClientListener {
         }
     }
 
+
+    public void setDefaultProperties(){
+        serverAddressTextField.setPromptText(PropertiesManager.getInstance().getProperty("ipAddress").toString());
+        serverPortTextField.setPromptText(PropertiesManager.getInstance().getProperty("port").toString());
+        usernameTextField.setPromptText(PropertiesManager.getInstance().getProperty("username").toString());
+    }
+
     public void onlineUsersListView_keyPressed(KeyEvent keyEvent) {
         if(keyEvent.getCode() == KeyCode.ENTER) {
             changeAddressee((User) onlineUsersListView.getSelectionModel().getSelectedItem());
@@ -100,6 +111,22 @@ public class MainController extends Controller implements ChatClientListener {
     public void negotiateButton_clicked(ActionEvent actionEvent) {
     }
 
-    public void textField_keyPressed(KeyEvent keyEvent) {
+
+    public void usernameTextField_mouseClicked(MouseEvent mouseEvent) {
+        usernameTextField.clear();
+    }
+
+    public void serverPortTextField_mouseClicked(MouseEvent mouseEvent) {
+        serverPortTextField.clear();
+    }
+
+    public void serverAddressTextField_mouseClicked(MouseEvent mouseEvent) {
+        serverAddressTextField.clear();
+    }
+
+    public void saveButton_clicked(ActionEvent actionEvent) {
+        PropertiesManager.getInstance().setProperty("ipAddress", serverAddressTextField.getText());
+        PropertiesManager.getInstance().setProperty("port", serverPortTextField.getText());
+        PropertiesManager.getInstance().setProperty("username", usernameTextField.getText());
     }
 }
