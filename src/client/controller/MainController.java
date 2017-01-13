@@ -22,8 +22,8 @@ import java.net.URL;
 import java.util.*;
 
 public class MainController extends Controller implements ChatClientListener {
-    ChatClient client;
-    User currentAddressee;
+    private ChatClient client;
+    private User currentAddressee;
 
     @FXML private ListView onlineUsersListView;
     @FXML private Tab conversationTab;
@@ -55,7 +55,6 @@ public class MainController extends Controller implements ChatClientListener {
         try {
             client = new ChatClient(ipAddress, port, new User(username));
             client.addListener(this);
-            client.sendAvailableUsersRequest();
         } catch (IOException e) {
             ErrorAlert.show(String.format("Server: %s:%d is not available...", ipAddress, port));
         }
@@ -84,10 +83,10 @@ public class MainController extends Controller implements ChatClientListener {
     }
 
 
-    public void setDefaultProperties(){
-        serverAddressTextField.setPromptText(PropertiesManager.getInstance().getProperty("ipAddress").toString());
-        serverPortTextField.setPromptText(PropertiesManager.getInstance().getProperty("port").toString());
-        usernameTextField.setPromptText(PropertiesManager.getInstance().getProperty("username").toString());
+    private void setDefaultProperties(){
+        serverAddressTextField.setText(PropertiesManager.getInstance().getProperty("ipAddress"));
+        serverPortTextField.setText(PropertiesManager.getInstance().getProperty("port"));
+        usernameTextField.setText(PropertiesManager.getInstance().getProperty("username"));
     }
 
     public void onlineUsersListView_keyPressed(KeyEvent keyEvent) {

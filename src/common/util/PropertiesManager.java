@@ -26,8 +26,7 @@ public class PropertiesManager {
 
     private void save(){
         try{
-            File propertiesFile = new File("/" + fileName + ".properties");
-            FileOutputStream fileOutputStream = new FileOutputStream(propertiesFile, false);
+            FileOutputStream fileOutputStream = new FileOutputStream(fileName + ".properties");
             properties.store(fileOutputStream, "Locally generated credentials file");
         } catch (IOException e) {
             showErrorDialog(e);
@@ -38,7 +37,7 @@ public class PropertiesManager {
     private void load(){
         InputStream inputStream;
         try {
-            inputStream = new FileInputStream("/" + fileName + ".properties");
+            inputStream = new FileInputStream(fileName + ".properties");
         } catch (FileNotFoundException e) {
             inputStream = getClass().getResourceAsStream(fileName + ".properties");
         }

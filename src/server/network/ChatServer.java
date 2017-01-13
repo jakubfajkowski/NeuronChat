@@ -2,6 +2,7 @@ package server.network;
 
 import common.network.ClientMessage;
 import common.network.SessionId;
+import common.util.Log;
 import common.util.User;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class ChatServer extends Server {
 
     @Override
     protected void handleMessage(ClientMessage message) {
+        Log.print("Received from " + message);
         SessionId addresseeSessionId = userSessionIdMap.get(message.getAddressee());
 
         switch (message.getClientMessageMode()) {

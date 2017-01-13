@@ -29,7 +29,7 @@ public class Session {
                     ClientMessage message = (ClientMessage) in.readObject();
                     messages.put(message);
                 } catch (IOException | InterruptedException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                    dispose();
                 }
             }
         });

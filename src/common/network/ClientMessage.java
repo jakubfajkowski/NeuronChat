@@ -17,6 +17,11 @@ public class ClientMessage implements Serializable {
         this.payload = payload;
     }
 
+    @Override
+    public String toString() {
+        return addressee + " message " + clientMessageMode;
+    }
+
     public ClientMessageMode getClientMessageMode() {
         return clientMessageMode;
     }

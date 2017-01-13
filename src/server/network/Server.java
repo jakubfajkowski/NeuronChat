@@ -4,7 +4,9 @@ import common.network.ClientMessage;
 import common.network.ClientMessageMode;
 import common.network.Session;
 import common.network.SessionId;
+import common.util.Log;
 
+import java.io.Console;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -28,6 +30,8 @@ public abstract class Server {
         running = true;
         runConnectThread();
         runMessageHandlingThread();
+
+        Log.print("Server started on port: " + port);
     }
 
     private void runConnectThread() {
@@ -42,7 +46,9 @@ public abstract class Server {
 
                     session.write(new ClientMessage(ClientMessageMode.CONNECTION, null, sessionId));
                 }
-                catch(IOException e){ e.printStackTrace(); }
+                catch(IOException e){
+                    Log.print("Connect socket closed");
+                }
             }
         });
 
@@ -57,7 +63,9 @@ public abstract class Server {
                     ClientMessage message = messages.take();
                     handleMessage(message);
                 }
-                catch(InterruptedException e){ e.printStackTrace(); }
+                catch(InterruptedException e){
+                    Log.print("Message handling thread exception: " + e.getMessage());
+                }
             }
         });
 
@@ -72,12 +80,14 @@ public abstract class Server {
 
         if (session != null) {
             session.write(message);
+            Log.print("Sent to " + message);
         }
     }
 
-    protected void sendToAll(ClientMessage clientMessage) {
+    protected void sendToAll(ClientMessage message) {
         for (Session s: sessionMap.values()) {
-            s.write(clientMessage);
+            s.write(message);
+            Log.print("Broadcast " + message);
         }
     }
 
