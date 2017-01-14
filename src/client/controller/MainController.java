@@ -4,6 +4,7 @@ import client.alert.ErrorAlert;
 import client.network.ChatClient;
 import common.util.Log;
 import common.util.User;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -44,10 +45,7 @@ public class MainController extends Controller implements ChatClientListener {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         PropertiesManager.getInstance().setFileName("options");
-
-
         connectToServer();
-
         setDefaultProperties();
     }
 
@@ -66,8 +64,7 @@ public class MainController extends Controller implements ChatClientListener {
 
     private void populatePhoneBook(List<User> users) {
         ObservableList<User> phoneBookRecords = FXCollections.observableArrayList(users);
-
-        onlineUsersListView.setItems(phoneBookRecords);
+        Platform.runLater(() -> onlineUsersListView.setItems(phoneBookRecords));
     }
 
     @Override

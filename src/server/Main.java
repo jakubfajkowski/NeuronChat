@@ -5,7 +5,7 @@ import server.network.ChatServer;
 public class Main {
     public static void main(String[] args) {
         try {
-            ChatServer server = new ChatServer(Integer.parseInt(args[0]));
+            ChatServer server = new ChatServer(10000);
             server.getConnectThread().join();
         }
         catch (Exception e) {

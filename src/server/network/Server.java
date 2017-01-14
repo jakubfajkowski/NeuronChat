@@ -15,15 +15,24 @@ public abstract class Server implements SessionListener {
     private ServerSocket serverSocket;
     private Thread connectThread;
     private boolean running;
+    private TimerTask timerTask;
 
     public Server(int port) throws IOException {
         sessions = new ArrayList<>();
         messages = new LinkedBlockingQueue<>();
         serverSocket = new ServerSocket(port);
 
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                handleUserList();
+            }
+        };
+
         running = true;
         runConnectThread();
         runMessageHandlingThread();
+        runUserListHandlingThread(timerTask);
 
         Log.print("Server started on port: " + port);
     }
@@ -70,6 +79,18 @@ public abstract class Server implements SessionListener {
         messageHandling.start();
     }
 
+    private void runUserListHandlingThread(TimerTask tt)
+    {
+        Thread userListHandling = new Thread(() -> {
+            Timer timer = new Timer();
+            timer.schedule(tt, 0, 5000);
+        });
+
+        userListHandling.setDaemon(true);
+        userListHandling.start();
+    }
+
+    protected abstract void handleUserList();
     abstract void handleMessage(ClientMessage message);
 
     void send(SessionId sessionId, ClientMessage message) {

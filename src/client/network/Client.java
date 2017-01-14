@@ -31,12 +31,13 @@ public abstract class Client {
 
     private void runMessageHandlingThread() {
         messageHandlingThread = new Thread(() -> {
-            while(running){
-                try{
+            while (running) {
+                try {
                     ClientMessage message = messages.take();
                     receiveMessage(message);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                catch(InterruptedException e){ e.printStackTrace(); }
             }
         });
 

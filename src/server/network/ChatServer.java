@@ -1,18 +1,12 @@
 package server.network;
 
-import common.network.ClientMessage;
-import common.network.Session;
-import common.network.SessionId;
-import common.network.SessionListener;
+import common.network.*;
 import common.util.Log;
 import common.util.User;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ChatServer extends Server {
     private Map<User, SessionId> userSessionIdMap;
@@ -30,20 +24,35 @@ public class ChatServer extends Server {
         switch (message.getClientMessageMode()) {
             case MESSAGE:
                 send(addresseeSessionId, message);
-            case AVAILABLE_USERS:
-                List<User> users = new ArrayList<>();
-                users.addAll(userSessionIdMap.keySet());
-                users.remove(message.getAddressee());
-                message.setPayload((Serializable) users);
-                break;
+            //case AVAILABLE_USERS:
+            //    List<User> users = new ArrayList<>();
+            //    users.addAll(userSessionIdMap.keySet());
+            //    users.remove(message.getAddressee());
+            //    message.setPayload((Serializable) users);
+            //    break;
             case CONNECTION:
                 User user = message.getAddressee();
                 SessionId sessionId = (SessionId) message.getPayload();
                 userSessionIdMap.put(user, sessionId);
                 break;
         }
-
         send(addresseeSessionId, message);
+    }
+
+    @Override
+    protected void handleUserList()
+    {
+        ClientMessage message = new ClientMessage(ClientMessageMode.AVAILABLE_USERS, null, null);
+        List<User> users = new ArrayList<>();
+        try{
+            users.addAll(userSessionIdMap.keySet());
+        }
+        catch (NullPointerException e) {
+            Log.print("User Handle List handling thread exception: " + e.getMessage());
+        }
+        users.remove(message.getAddressee());
+        message.setPayload((Serializable) users);
+        sendToAll(message);
     }
 
     @Override

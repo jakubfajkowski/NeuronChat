@@ -26,7 +26,7 @@ public class ChatClient extends Client {
             case CONNECTION:
                 SessionId sessionId = (SessionId) message.getPayload();
                 sendUsername(sessionId);
-                sendAvailableUsersRequest();
+                //sendAvailableUsersRequest();
                 break;
 
             default:
