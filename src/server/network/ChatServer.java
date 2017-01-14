@@ -50,13 +50,13 @@ public class ChatServer extends Server {
         switch (message.getClientMessageMode()) {
             case MESSAGE:
                 send(addresseeSessionId, message);
+                break;
             case CONNECTION:
                 User user = message.getAddressee();
                 SessionId sessionId = (SessionId) message.getPayload();
                 userSessionIdMap.put(user, sessionId);
                 break;
         }
-        send(addresseeSessionId, message);
     }
 
     @Override
