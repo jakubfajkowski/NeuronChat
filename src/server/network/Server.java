@@ -9,30 +9,22 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class Server implements SessionListener {
     private List<Session> sessions;
     private LinkedBlockingQueue<ClientMessage> messages;
     private ServerSocket serverSocket;
     private Thread connectThread;
     private boolean running;
-    private TimerTask timerTask;
 
     public Server(int port) throws IOException {
         sessions = new ArrayList<>();
         messages = new LinkedBlockingQueue<>();
         serverSocket = new ServerSocket(port);
 
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                handleUserList();
-            }
-        };
-
         running = true;
         runConnectThread();
         runMessageHandlingThread();
-        runUserListHandlingThread(timerTask);
 
         Log.print("Server started on port: " + port);
     }
@@ -48,7 +40,7 @@ public abstract class Server implements SessionListener {
                     session.setSessionId(sessionId);
                     session.setSessionListener(this);
                     sessions.add(session);
-                    Log.print(String.format("Session %s initialized", sessionId));
+                    Log.print("Session %s initialized", sessionId);
 
                     session.write(new ClientMessage(ClientMessageMode.CONNECTION, null, sessionId));
                 }
@@ -79,18 +71,6 @@ public abstract class Server implements SessionListener {
         messageHandling.start();
     }
 
-    private void runUserListHandlingThread(TimerTask tt)
-    {
-        Thread userListHandling = new Thread(() -> {
-            Timer timer = new Timer();
-            timer.schedule(tt, 0, 5000);
-        });
-
-        userListHandling.setDaemon(true);
-        userListHandling.start();
-    }
-
-    protected abstract void handleUserList();
     abstract void handleMessage(ClientMessage message);
 
     void send(SessionId sessionId, ClientMessage message) {
@@ -105,7 +85,7 @@ public abstract class Server implements SessionListener {
     protected void sendToAll(ClientMessage message) {
         for (Session s: sessions) {
             s.write(message);
-            Log.print("Broadcast " + message);
+            Log.print("Broadcast %s to %d user(s)", message.getClientMessageMode(), sessions.size());
         }
     }
 
@@ -125,7 +105,7 @@ public abstract class Server implements SessionListener {
 
     protected void finalizeSession(Session session) {
         sessions.remove(session);
-        Log.print(String.format("Session %s disposed", session.getSessionId()));
+        Log.print("Session %s disposed", session.getSessionId());
     }
 
     public Thread getConnectThread() {
