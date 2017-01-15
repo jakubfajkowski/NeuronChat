@@ -18,7 +18,7 @@ public class ChatMessage implements Serializable {
 
     @Override
     public String toString() {
-        return sender + " " + dateCreated.toString() + "\n\n"
-                + text + "\n";
+        return sender + " --- " + dateCreated.toString() + "\n"
+                + text + "\n\n";
     }
 }
