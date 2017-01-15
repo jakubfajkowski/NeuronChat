@@ -1,9 +1,6 @@
 package client;
 
-import client.alert.ErrorAlert;
-import client.network.ChatClient;
 import common.util.PropertiesManager;
-import common.util.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

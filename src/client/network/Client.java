@@ -3,13 +3,10 @@ package client.network;
 import common.network.ClientMessage;
 import common.network.Session;
 import common.network.SessionId;
-import common.util.Log;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class Client {

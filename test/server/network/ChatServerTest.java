@@ -2,11 +2,8 @@ package server.network;
 
 import client.network.ChatClient;
 import client.network.ChatClientListener;
-import client.network.Client;
-import common.network.ChatMessage;
 import common.network.ClientMessage;
 import common.util.User;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**

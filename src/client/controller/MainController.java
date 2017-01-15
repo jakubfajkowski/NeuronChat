@@ -3,7 +3,6 @@ package client.controller;
 import client.alert.ErrorAlert;
 import client.network.ChatClient;
 import client.network.ChatClientSingleton;
-import common.util.Log;
 import common.util.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -15,7 +14,6 @@ import common.network.ChatMessage;
 import common.network.ClientMessage;
 import client.network.ChatClientListener;
 import common.util.PropertiesManager;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -29,6 +27,7 @@ public class MainController extends Controller implements ChatClientListener {
     private User currentAddressee;
 
     @FXML private ListView onlineUsersListView;
+    @FXML private Label partnerNameLabel;
     @FXML private Tab conversationTab;
     @FXML private TextArea outputTextArea;
     @FXML private TextArea inputTextArea;
@@ -46,8 +45,8 @@ public class MainController extends Controller implements ChatClientListener {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setDefaultProperties();
+        client.addListener(this);
     }
-
 
     private void populatePhoneBook(List<User> users) {
         ObservableList<User> phoneBookRecords = FXCollections.observableArrayList(users);
@@ -65,6 +64,7 @@ public class MainController extends Controller implements ChatClientListener {
 
             case AVAILABLE_USERS:
                 List<User> users = (ArrayList<User>) message.getPayload();
+                users.remove(client.getLocalUser());
                 populatePhoneBook(users);
                 break;
         }
@@ -88,10 +88,12 @@ public class MainController extends Controller implements ChatClientListener {
 
     private void changeAddressee(User addressee) {
         currentAddressee = addressee;
+        partnerNameLabel.setText(addressee.getUsername());
     }
 
     public void sendButton_clicked(ActionEvent actionEvent) {
         client.sendMessage(inputTextArea.getText(), currentAddressee);
+
     }
 
     public void negotiateButton_clicked(ActionEvent actionEvent) {

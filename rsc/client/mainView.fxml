@@ -22,9 +22,11 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TextArea fx:id="outputTextArea" editable="false" layoutX="12.0" layoutY="14.0" prefHeight="200.0" prefWidth="371.0" wrapText="true" />
-                        <TextArea fx:id="inputTextArea" layoutX="15.0" layoutY="223.0" prefHeight="134.0" prefWidth="275.0" wrapText="true" />
-                        <Button fx:id="sendButton" layoutX="296.0" layoutY="222.0" mnemonicParsing="false" onAction="#sendButton_clicked" prefHeight="135.0" prefWidth="90.0" text="Send" />
+                        <TextArea fx:id="outputTextArea" editable="false" layoutX="12.0" layoutY="39.0" prefHeight="233.0" prefWidth="371.0" wrapText="true" />
+                        <TextArea fx:id="inputTextArea" layoutX="15.0" layoutY="280.0" prefHeight="77.0" prefWidth="275.0" wrapText="true" />
+                        <Button fx:id="sendButton" layoutX="296.0" layoutY="280.0" mnemonicParsing="false" onAction="#sendButton_clicked" prefHeight="77.0" prefWidth="90.0" text="Send" />
+                        <Label layoutX="15.0" layoutY="14.0" text="Conversation with: " />
+                        <Label fx:id="partnerNameLabel" layoutX="125.0" layoutY="14.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -35,7 +37,7 @@
                      <children>
                         <Button fx:id="negotiateButton" layoutX="6.0" layoutY="327.0" mnemonicParsing="false" onAction="#negotiateButton_clicked" prefHeight="30.0" prefWidth="380.0" text="Negotiate" />
                         <TextArea fx:id="logTextField" layoutX="6.0" layoutY="243.0" prefHeight="84.0" prefWidth="380.0" />
-                        <TextArea fx:id="matrixTextField" layoutX="96.0" layoutY="22.0" prefHeight="200.0" prefWidth="200.0" />
+                        <TextArea fx:id="matrixTextField" editable="false" layoutX="96.0" layoutY="22.0" prefHeight="200.0" prefWidth="200.0" />
                      </children>
                   </AnchorPane>
             </content>

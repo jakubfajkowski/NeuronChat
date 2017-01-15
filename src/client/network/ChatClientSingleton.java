@@ -1,9 +1,7 @@
 package client.network;
 
 import client.alert.ConnectionAlert;
-import client.alert.ErrorAlert;
 import common.util.PropertiesManager;
-import common.util.User;
 
 import java.io.IOException;
 

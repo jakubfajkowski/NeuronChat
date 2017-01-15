@@ -23,8 +23,7 @@ public class ChatServer extends Server {
         runBroadcastUserListTimerTask();
     }
 
-    private void runBroadcastUserListTimerTask()
-    {
+    private void runBroadcastUserListTimerTask() {
         broadcastUserListTimerTask = new TimerTask() {
             @Override
             public void run() {
@@ -41,7 +40,6 @@ public class ChatServer extends Server {
         List<User> users = new ArrayList<>();
         users.addAll(userSessionIdMap.keySet());
 
-        users.remove(message.getAddressee());
         message.setPayload((Serializable) users);
         sendToAll(message);
     }
@@ -78,10 +76,13 @@ public class ChatServer extends Server {
         boolean loginResult = authenticationService.validate(userCredentials);
         message.setPayload(loginResult);
 
-        if (loginResult)
+        if (loginResult) {
+            userSessionIdMap.put(user, sessionId);
             Log.print("%s - login succeeded", user);
-        else
+        }
+        else {
             Log.print("%s - login failed", user);
+        }
 
         send(sessionId, message);
     }
