@@ -2,6 +2,7 @@ package client.network;
 
 import common.network.ClientMessage;
 import common.network.Session;
+import common.network.SessionId;
 import common.util.Log;
 
 import java.io.IOException;
@@ -54,6 +55,14 @@ public abstract class Client {
     public void stop() throws IOException {
         running = false;
         serverSession.dispose();
+    }
+
+    protected void setServerSessionId(SessionId sessionId) {
+        serverSession.setSessionId(sessionId);
+    }
+
+    protected SessionId getServerSessionId() {
+        return serverSession.getSessionId();
     }
 
     public Thread getMessageHandlingThread() {

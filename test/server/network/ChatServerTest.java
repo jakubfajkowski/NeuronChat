@@ -25,10 +25,10 @@ public class ChatServerTest {
 
         Thread.sleep(1000);
         User user1 = new User("Test1");
-        ChatClient chatClient1 = new ChatClient("127.0.0.1", 10000, user1);
+        ChatClient chatClient1 = new ChatClient("127.0.0.1", 10000);
         chatClient1.addListener(chatClientListener);
         User user2 = new User("Test2");
-        ChatClient chatClient2 = new ChatClient("127.0.0.1", 10000, user2);
+        ChatClient chatClient2 = new ChatClient("127.0.0.1", 10000);
         chatClient2.addListener(chatClientListener);
         Thread.sleep(1000);
         chatClient2.sendMessage("HEJKA STULEJKA", user1);

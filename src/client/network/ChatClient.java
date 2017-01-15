@@ -5,6 +5,7 @@ import common.network.ClientMessage;
 import common.network.ClientMessageMode;
 import common.network.SessionId;
 import common.util.User;
+import common.util.UserCredentials;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,49 +15,43 @@ public class ChatClient extends Client {
     private User localUser;
     private List<ChatClientListener> chatClientListeners;
 
-    public ChatClient(String ipAddress, int port, User localUser) throws IOException {
+    public ChatClient(String ipAddress, int port) throws IOException {
         super(ipAddress, port);
-        this.localUser = localUser;
         this.chatClientListeners = new ArrayList<>();
     }
 
     @Override
     protected void receiveMessage(ClientMessage message) {
         switch (message.getClientMessageMode()) {
-            case CONNECTION:
-                SessionId sessionId = (SessionId) message.getPayload();
-                sendUsername(sessionId);
-                //sendAvailableUsersRequest();
+            case INITIALIZE_SESSION:
+                setServerSessionId((SessionId) message.getPayload());
                 break;
-
             default:
                 for (ChatClientListener c: chatClientListeners) {
                     c.handleMessage(message);
                 }
                 break;
         }
-
-
     }
 
     public void addListener(ChatClientListener chatClientListener) {
         chatClientListeners.add(chatClientListener);
     }
 
-    public void sendAvailableUsersRequest() {
+    public void sendLoginRequest(UserCredentials userCredentials) {
         ClientMessage messageToSend = new ClientMessage(
-                ClientMessageMode.AVAILABLE_USERS,
-                localUser,
-                null
+                ClientMessageMode.LOGIN,
+                userCredentials,
+                getServerSessionId()
         );
         send(messageToSend);
     }
 
-    private void sendUsername(SessionId sessionId) {
+    public void sendRegisterRequest(UserCredentials userCredentials) {
         ClientMessage messageToSend = new ClientMessage(
-                ClientMessageMode.CONNECTION,
-                localUser,
-                sessionId
+                ClientMessageMode.REGISTER,
+                userCredentials,
+                getServerSessionId()
         );
         send(messageToSend);
     }
@@ -68,5 +63,13 @@ public class ChatClient extends Client {
                 new ChatMessage(localUser, chatMessageText)
         );
         send(messageToSend);
+    }
+
+    public User getLocalUser() {
+        return localUser;
+    }
+
+    public void setLocalUser(User localUser) {
+        this.localUser = localUser;
     }
 }

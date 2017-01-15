@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     static final long serialVersionUID = 1L;
+
     private String username;
 
     public User(String username) {
@@ -27,6 +28,10 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
+        return username;
+    }
+
+    public String getUsername() {
         return username;
     }
 }

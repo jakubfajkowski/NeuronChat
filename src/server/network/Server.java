@@ -42,7 +42,7 @@ public abstract class Server implements SessionListener {
                     sessions.add(session);
                     Log.print("Session %s initialized", sessionId);
 
-                    session.write(new ClientMessage(ClientMessageMode.CONNECTION, null, sessionId));
+                    session.write(new ClientMessage(ClientMessageMode.INITIALIZE_SESSION, null, sessionId));
                 }
                 catch(IOException e){
                     Log.print("Connect socket closed");

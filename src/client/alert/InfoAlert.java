@@ -5,9 +5,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class InfoAlert{
-    public void show(String message){
+    public static void show(String message){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("ChatApp");
+        alert.setTitle("Info");
         alert.setHeaderText("");
         alert.setContentText(message);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();

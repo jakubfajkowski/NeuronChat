@@ -4,5 +4,7 @@ public enum ClientMessageMode {
     MESSAGE,
     AVAILABLE_USERS,
     NEGOTIATION,
-    CONNECTION
+    INITIALIZE_SESSION,
+    LOGIN,
+    REGISTER
 }

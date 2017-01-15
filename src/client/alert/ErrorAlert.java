@@ -7,7 +7,7 @@ import javafx.stage.StageStyle;
 public class ErrorAlert {
     public static void show(String message){
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("ChatApp");
+        alert.setTitle("Error");
         alert.setHeaderText("");
         alert.setContentText(message);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();

@@ -2,6 +2,7 @@ package client.controller;
 
 import client.alert.ErrorAlert;
 import client.network.ChatClient;
+import client.network.ChatClientSingleton;
 import common.util.Log;
 import common.util.User;
 import javafx.application.Platform;
@@ -24,7 +25,7 @@ import java.net.URL;
 import java.util.*;
 
 public class MainController extends Controller implements ChatClientListener {
-    private ChatClient client;
+    private ChatClient client = ChatClientSingleton.getInstance().getClient();
     private User currentAddressee;
 
     @FXML private ListView onlineUsersListView;
@@ -44,23 +45,9 @@ public class MainController extends Controller implements ChatClientListener {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        PropertiesManager.getInstance().setFileName("options");
-        connectToServer();
         setDefaultProperties();
     }
 
-    private void connectToServer() {
-        String serverIpAddress = PropertiesManager.getInstance().getProperty("ipAddress");
-        int serverPort = Integer.parseInt(PropertiesManager.getInstance().getProperty("port"));
-        String username = PropertiesManager.getInstance().getProperty("username");
-
-        try {
-            client = new ChatClient(serverIpAddress, serverPort, new User(username));
-            client.addListener(this);
-        } catch (IOException e) {
-            ErrorAlert.show(String.format("Server: %s:%d is not available...", serverIpAddress, serverPort));
-        }
-    }
 
     private void populatePhoneBook(List<User> users) {
         ObservableList<User> phoneBookRecords = FXCollections.observableArrayList(users);
@@ -123,17 +110,25 @@ public class MainController extends Controller implements ChatClientListener {
     }
 
     public void saveButton_clicked(ActionEvent actionEvent) {
-        PropertiesManager.getInstance().setProperty("ipAddress", serverAddressTextField.getText());
-        PropertiesManager.getInstance().setProperty("port", serverPortTextField.getText());
-        PropertiesManager.getInstance().setProperty("username", usernameTextField.getText());
+        try {
+            Runtime.getRuntime().exec("java -jar myApp.jar");
+            PropertiesManager.getInstance().setProperty("ipAddress", serverAddressTextField.getText());
+            PropertiesManager.getInstance().setProperty("port", serverPortTextField.getText());
+            PropertiesManager.getInstance().setProperty("username", usernameTextField.getText());
+
+            System.exit(0);
+        } catch (IOException e) {
+            ErrorAlert.show("Unable to restart application: " + e.getMessage());
+        }
     }
 
     public void reconnectButton_clicked(ActionEvent actionEvent) {
         try {
             client.stop();
-            connectToServer();
+            client = ChatClientSingleton.getInstance().connectToServer();
+
         } catch (IOException e) {
-            Log.print("Client exception: " + e.getMessage());
+            ErrorAlert.show("Client exception: " + e.getMessage());
         }
     }
 }

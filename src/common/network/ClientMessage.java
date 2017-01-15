@@ -8,6 +8,7 @@ public class ClientMessage implements Serializable {
     static final long serialVersionUID = 1L;
 
     private ClientMessageMode clientMessageMode;
+
     private User addressee;
     private Serializable payload;
 
@@ -28,6 +29,10 @@ public class ClientMessage implements Serializable {
 
     public User getAddressee() {
         return addressee;
+    }
+
+    public void setAddressee(User addressee) {
+        this.addressee = addressee;
     }
 
     public Serializable getPayload() {
