@@ -52,7 +52,7 @@ public class LoginController extends Controller implements ChatClientListener {
     }
 
     @Override
-    public void handleMessage(ClientMessage message) {
+    public void handleClientMessage(ClientMessage message) {
         switch (message.getClientMessageMode()) {
             case LOGIN:
                 processLoginResponse((boolean) message.getPayload());

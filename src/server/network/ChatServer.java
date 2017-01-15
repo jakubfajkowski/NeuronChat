@@ -46,8 +46,6 @@ public class ChatServer extends Server {
 
     @Override
     protected void handleMessage(ClientMessage message) {
-        Log.print("Received from " + message);
-
         switch (message.getClientMessageMode()) {
             case MESSAGE:
                 passMessage(message);

@@ -2,6 +2,7 @@ package server.network;
 
 import client.network.ChatClient;
 import client.network.ChatClientListener;
+import common.network.ChatMessage;
 import common.network.ClientMessage;
 import common.util.User;
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class ChatServerTest {
         ChatServer chatServer = new ChatServer(10000);
         ChatClientListener chatClientListener = new ChatClientListener() {
             @Override
-            public void handleMessage(ClientMessage message) {
+            public void handleClientMessage(ClientMessage message) {
                 System.out.println(message.getClientMessageMode() + " " + message.getAddressee());
             }
         };
@@ -28,8 +29,10 @@ public class ChatServerTest {
         ChatClient chatClient2 = new ChatClient("127.0.0.1", 10000);
         chatClient2.addListener(chatClientListener);
         Thread.sleep(1000);
-        chatClient2.sendMessage("HEJKA STULEJKA", user1);
-        chatClient1.sendMessage("STULEJKA HEJKA", user2);
+        ChatMessage chatMessage1 = new ChatMessage(user2, "HEJKA STULEJKA");
+        ChatMessage chatMessage2 = new ChatMessage(user1, "STULEJKA HEJKA");
+        chatClient2.sendMessage(chatMessage1, user1);
+        chatClient1.sendMessage(chatMessage2, user2);
         Thread.sleep(1000000);
     }
 

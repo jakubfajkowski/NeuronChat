@@ -28,7 +28,7 @@ public class ChatClient extends Client {
                 break;
             default:
                 for (ChatClientListener c: chatClientListeners) {
-                    c.handleMessage(message);
+                    c.handleClientMessage(message);
                 }
                 break;
         }
@@ -56,11 +56,11 @@ public class ChatClient extends Client {
         send(messageToSend);
     }
 
-    public void sendMessage(String chatMessageText, User addressee) {
+    public void sendMessage(ChatMessage chatMessage, User addressee) {
         ClientMessage messageToSend = new ClientMessage(
                 ClientMessageMode.MESSAGE,
                 addressee,
-                new ChatMessage(localUser, chatMessageText)
+                chatMessage
         );
         send(messageToSend);
     }

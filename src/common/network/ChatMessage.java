@@ -21,4 +21,8 @@ public class ChatMessage implements Serializable {
         return sender + " --- " + dateCreated.toString() + "\n"
                 + text + "\n\n";
     }
+
+    public User getSender() {
+        return sender;
+    }
 }
