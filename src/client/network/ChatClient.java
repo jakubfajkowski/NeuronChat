@@ -38,6 +38,15 @@ public class ChatClient extends Client {
         chatClientListeners.add(chatClientListener);
     }
 
+    public void sendInitializeKeyNegotiationRequest(int K, int N, int L) {
+        ClientMessage messageToSend = new ClientMessage(
+                ClientMessageMode.INITIALIZE_KEY_NEGOTIATION,
+                null,
+                new int[]{K, N, L}
+        );
+        send(messageToSend);
+    }
+
     public void sendLoginRequest(UserCredentials userCredentials) {
         ClientMessage messageToSend = new ClientMessage(
                 ClientMessageMode.LOGIN,

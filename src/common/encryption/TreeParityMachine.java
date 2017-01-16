@@ -3,15 +3,17 @@ package common.encryption;
 public class TreeParityMachine {
     private int[] inputVectorData;
     private int[] weights, hiddenLayer;
-    public int K, N, L;
+    private int K, N, L;
     private int output;
+    private int counter;
 
-    public TreeParityMachine(int n, int k, int l) {
-        this.K = k;
-        this.N = n;
-        this.L = l;
-        weights = new int[k * n];
-        hiddenLayer = new int[k];
+    public TreeParityMachine(int K, int N, int L) {
+        this.K = K;
+        this.N = N;
+        this.L = L;
+        weights = new int[N * K];
+        hiddenLayer = new int[N];
+        counter = 0;
         randomize();
     }
 
@@ -36,6 +38,8 @@ public class TreeParityMachine {
         return output;
     }
     public void updateWeight(LearningRule learningRule){
+        counter++;
+
         switch (learningRule) {
             case HEBBIAN:
                 applyHebbianLearningRule();
@@ -117,10 +121,6 @@ public class TreeParityMachine {
         return (a == b) ? 1 : 0;
     }
 
-    public int[] getWeights(){
-        return weights;
-    }
-
     public void display(){
         for(int i=0;i<K;i++)
             for(int j=0;j<N;j++){
@@ -150,5 +150,17 @@ public class TreeParityMachine {
         }
 
         return max;
+    }
+
+    public int[] getWeights(){
+        return weights;
+    }
+
+    public int getInputVectorLength() {
+        return K*N;
+    }
+
+    public int getCounter() {
+        return counter;
     }
 }

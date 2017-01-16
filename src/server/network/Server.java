@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class Server implements SessionListener {
-    private List<Session> sessions;
+    private List<SecureSession> sessions;
     private LinkedBlockingQueue<ClientMessage> messages;
     private ServerSocket serverSocket;
     private Thread connectThread;
@@ -35,7 +35,7 @@ public abstract class Server implements SessionListener {
                 try{
                     Socket s = serverSocket.accept();
 
-                    Session session = new Session(s, messages);
+                    SecureSession session = new SecureSession(s, messages);
                     SessionId sessionId = new SessionId();
                     session.setSessionId(sessionId);
                     session.setSessionListener(this);
@@ -74,7 +74,7 @@ public abstract class Server implements SessionListener {
     abstract void handleMessage(ClientMessage message);
 
     void send(SessionId sessionId, ClientMessage message) {
-        Optional<Session> session = getSessionBySessionId(sessionId);
+        Optional<SecureSession> session = getSessionBySessionId(sessionId);
 
         if (session.isPresent()) {
             session.get().write(message);
@@ -99,7 +99,7 @@ public abstract class Server implements SessionListener {
         messages.clear();
     }
 
-    private Optional<Session> getSessionBySessionId(SessionId sessionId) {
+    private Optional<SecureSession> getSessionBySessionId(SessionId sessionId) {
         return sessions.stream().filter(session -> session.getSessionId().equals(sessionId)).findFirst();
     }
 

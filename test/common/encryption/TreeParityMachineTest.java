@@ -12,14 +12,13 @@ public class TreeParityMachineTest {
     public void synchronize() throws Exception {
         int K = 4;
         int N = 8;
-        int L = 16;
+        int L = 4;
 
         TreeParityMachine a = new TreeParityMachine(K, N, L);
         TreeParityMachine b = new TreeParityMachine(K, N, L);
 
-        int counter = 0;
         do {
-            InputVector inputVector = InputVector.generate(K, N);
+            InputVector inputVector = InputVector.generate(a);
 
             int tauA = a.computeOutput(inputVector);
             int tauB = b.computeOutput(inputVector);
@@ -29,11 +28,10 @@ public class TreeParityMachineTest {
                 b.updateWeight(LearningRule.RANDOM_WALK);
             }
 
-            counter++;
             Log.print("MSE: " + TreeParityMachine.synchronizationStatus(a.getWeights(), b.getWeights()));
         } while (TreeParityMachine.meanSquaredError(a.getWeights(), b.getWeights()) != 0);
 
-        Log.print("Synchronized in %d iterations.", counter);
+        Log.print("Synchronized in %d iterations.", a.getCounter());
         Log.print("Machine A key: " + DatatypeConverter.printHexBinary(a.generateKey()));
         Log.print("Machine B key: " + DatatypeConverter.printHexBinary(b.generateKey()));
 

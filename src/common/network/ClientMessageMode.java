@@ -3,7 +3,10 @@ package common.network;
 public enum ClientMessageMode {
     MESSAGE,
     AVAILABLE_USERS,
-    NEGOTIATION,
+    INITIALIZE_KEY_NEGOTIATION,
+    KEY_NEGOTIATION,
+    TEST_KEY,
+    FINALIZE_KEY_NEGOTIATION,
     INITIALIZE_SESSION,
     LOGIN,
     REGISTER

@@ -1,6 +1,7 @@
 package client.network;
 
 import common.network.ClientMessage;
+import common.network.SecureSession;
 import common.network.Session;
 import common.network.SessionId;
 
@@ -10,7 +11,7 @@ import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class Client {
-    private Session serverSession;
+    private SecureSession serverSession;
     private LinkedBlockingQueue<ClientMessage> messages;
     private Socket socket;
     private Thread messageHandlingThread;
@@ -21,7 +22,7 @@ public abstract class Client {
         socket.connect(new InetSocketAddress(ipAddress, port));
 
         messages = new LinkedBlockingQueue<>();
-        serverSession = new Session(socket, messages);
+        serverSession = new SecureSession(socket, messages);
 
         running = true;
         runMessageHandlingThread();

@@ -4,19 +4,19 @@ import java.io.Serializable;
 
 public class InputVector implements Serializable {
     private int[] data;
+    private int output;
 
-    private InputVector() {}
+    private InputVector(int length) {
+        data = new int[length];
 
-    public static InputVector generate(int K, int N) {
-        InputVector inputVector = new InputVector();
-
-        inputVector.data = new int[K * N];
-
-        for (int i = 0; i < K * N; i++) {
-            inputVector.data[i] = getRandomBit();
+        for (int i = 0; i < length; i++) {
+            data[i] = getRandomBit();
         }
+    }
 
-        return inputVector;
+    public static InputVector generate(TreeParityMachine t) {
+        int length = t.getInputVectorLength();
+        return new InputVector(length);
     }
 
 
@@ -27,5 +27,13 @@ public class InputVector implements Serializable {
 
     public int[] getData() {
         return data;
+    }
+
+    public int getOutput() {
+        return output;
+    }
+
+    public void setOutput(int output) {
+        this.output = output;
     }
 }

@@ -1,13 +1,12 @@
 package common.encryption;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
 
 import static org.junit.Assert.*;
 
-public class NeuralNetworkSecurityTest {
+public class SecurityTest {
     private Random random = new Random();
     private final int numberOfIterations = 10000;
 
@@ -25,8 +24,8 @@ public class NeuralNetworkSecurityTest {
             byte[] expected = new byte[random.nextInt(numberOfIterations) + numberOfIterations];
             random.nextBytes(expected);
 
-            byte[] encryptedData = NeuralNetworkSecurity.encrypt(expected, key);
-            byte[] decryptedData = NeuralNetworkSecurity.decrypt(encryptedData, key);
+            byte[] encryptedData = Security.encrypt(expected, key);
+            byte[] decryptedData = Security.decrypt(encryptedData, key);
 
             assertArrayEquals(expected, decryptedData);
         }

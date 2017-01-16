@@ -15,23 +15,25 @@ public class Session {
     private ObjectOutputStream out;
     private boolean disposed;
     private Thread messageReadingThread;
+    private LinkedBlockingQueue<ClientMessage> messages;
     private SessionListener sessionListener;
 
     public Session(Socket socket, LinkedBlockingQueue<ClientMessage> messages) throws IOException {
         this.socket = socket;
+        this.messages = messages;
         out = new ObjectOutputStream(socket.getOutputStream());
         out.flush();
         in = new ObjectInputStream(socket.getInputStream());
 
-        runMessageReadingThread(messages);
+        runMessageReadingThread();
     }
 
-    private void runMessageReadingThread(LinkedBlockingQueue<ClientMessage> messages) {
+    private void runMessageReadingThread() {
         messageReadingThread = new Thread(() -> {
             while (!disposed) {
                 try {
                     ClientMessage message = (ClientMessage) in.readObject();
-                    messages.put(message);
+                    read(message);
                 } catch (IOException | InterruptedException | ClassNotFoundException e) {
                     dispose();
                 }
@@ -40,6 +42,10 @@ public class Session {
 
         messageReadingThread.setDaemon(true); // terminate when main ends
         messageReadingThread.start();
+    }
+
+    protected void read(ClientMessage message) throws InterruptedException {
+        messages.put(message);
     }
 
     public void write(ClientMessage message) {

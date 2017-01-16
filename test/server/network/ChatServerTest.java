@@ -36,4 +36,25 @@ public class ChatServerTest {
         Thread.sleep(1000000);
     }
 
+    @Test
+    public void encryptionTest() throws Exception {
+        ChatServer chatServer = new ChatServer(10000);
+        ChatClientListener chatClientListener = new ChatClientListener() {
+            @Override
+            public void handleClientMessage(ClientMessage message) {
+                System.out.println(message.getClientMessageMode() + " " + message.getAddressee());
+            }
+        };
+
+        Thread.sleep(1000);
+        User user1 = new User("Test1");
+        ChatClient chatClient1 = new ChatClient("127.0.0.1", 10000);
+        chatClient1.addListener(chatClientListener);
+        User user2 = new User("Test2");
+        ChatClient chatClient2 = new ChatClient("127.0.0.1", 10000);
+        chatClient2.addListener(chatClientListener);
+        Thread.sleep(1000);
+        chatClient1.sendInitializeKeyNegotiationRequest(4,8,4);
+        Thread.sleep(1000000);
+    }
 }
