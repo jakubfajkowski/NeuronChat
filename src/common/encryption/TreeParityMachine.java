@@ -1,10 +1,8 @@
 package common.encryption;
 
-import java.util.ArrayList;
-
 public class TreeParityMachine {
-
-    private int[] w, h;
+    private int[] inputVectorData;
+    private int[] weights, hiddenLayer;
     public int K, N, L;
     private int output;
 
@@ -12,103 +10,145 @@ public class TreeParityMachine {
         this.K = k;
         this.N = n;
         this.L = l;
-        w = new int[k * n];
-        h = new int[k];
+        weights = new int[k * n];
+        hiddenLayer = new int[k];
+        randomize();
     }
 
-    public void calcOutput(int[] x) {
+    public void randomize(){
+        for(int i=0;i<K*N;i++){
+            weights[i]=(int)(Math.random()*L);
+        }
+    }
+
+    public int computeOutput(InputVector inputVector) {
+        inputVectorData = inputVector.getData();
         output=1;
         for (int i = 0; i < K; i++) {
             int sum = 0;
             for (int j = 0; j < N; j++) {
-                sum += w[i * N + j] * x[i * N + j];
+                sum += weights[i * N + j] * inputVectorData[i * N + j];
             }
-            h[i] = sigma(sum);
+            hiddenLayer[i] = sigma(sum);
             output *= sigma(sum);
         }
+
+        return output;
     }
-    public void updateWeight(int[] x){
-        for(int i=0;i<K;i++){
-            for(int j=0;j<N;j++){
-                int newW=w[i*N+j];
-                //calcOutput(x);
-                newW+=x[i*N+j]*output*equ(output,h[i]);
-                if(newW>L) newW=L;
-                if(newW<-L) newW=-L;
-                w[i*N+j]=newW;
+    public void updateWeight(LearningRule learningRule){
+        switch (learningRule) {
+            case HEBBIAN:
+                applyHebbianLearningRule();
+                break;
+            case ANTI_HEBBIAN:
+                applyAntiHebbianLearningRule();
+                break;
+            case RANDOM_WALK:
+                applyRandomWalkLearningRule();
+                break;
+        }
+    }
+
+    private void applyHebbianLearningRule() {
+        for (int i = 0;i < K; i++){
+            for (int j = 0;j < N; j++){
+                int newWeight= weights[i*N + j];
+                newWeight += inputVectorData[i*N + j] * hiddenLayer[i] * theta(output, hiddenLayer[i]);
+                if(newWeight > L) newWeight=L;
+                if(newWeight < -L) newWeight=-L;
+                weights[i*N + j]=newWeight;
             }
         }
     }
-    public void randomize(){
-        for(int i=0;i<K*N;i++){
-            w[i]=(int)(Math.random()*L);
+
+    private void applyAntiHebbianLearningRule() {
+        for (int i = 0;i < K; i++){
+            for (int j = 0; j < N; j++){
+                int newWeight= weights[i*N + j];
+                newWeight -= inputVectorData[i*N + j] * hiddenLayer[i] * theta(output, hiddenLayer[i]);
+                if(newWeight > L) newWeight=L;
+                if(newWeight < -L) newWeight=-L;
+                weights[i*N + j]=newWeight;
+            }
         }
     }
-    public int getVectorValue(){
-        int s=0;
-        for(int i=0;i<K*N;i++){
-            s+=w[i];
+
+    private void applyRandomWalkLearningRule() {
+        for(int i=0;i<K;i++){
+            for(int j=0;j<N;j++){
+                int newWeight= weights[i*N + j];
+                newWeight += inputVectorData[i*N + j] * theta(output, hiddenLayer[i]);
+                if(newWeight > L) newWeight=L;
+                if(newWeight < -L) newWeight=-L;
+                weights[i*N + j]=newWeight;
+            }
         }
+    }
+
+    public static double meanSquaredError(int[] a, int[] b){
+        double s=0;
+
+        for(int i=0; i < a.length; i++){
+            double err = Math.abs(a[i]-b[i]);
+            s += err*err;
+        }
+        s /= a.length;
+
         return s;
     }
 
-    public int getOutput(){
-        return output;
-    }
-    public int getSum(TreeParityMachine a){
-        int s=0;
-        for(int i=0;i<K*N;i++){
-            s+=Math.abs(w[i]-a.getWeight(i));
+    public static double synchronizationStatus(int[] a, int[] b){
+        double s=0;
+
+        for(int i=0; i < a.length; i++){
+            if (a[i] == b[i])
+                s += 1;
         }
+        s /= a.length;
+
         return s;
     }
 
     public static int sigma(double r) {
         return (r > 0) ? 1 : -1;
     }
-    public static int equ(int a,int b){
-        return (a==b)?1:0;
+
+    public static int theta(int a, int b){
+        return (a == b) ? 1 : 0;
     }
 
-    /*getter functions */
-    public int getWeight(int i){
-        return w[i];
+    public int[] getWeights(){
+        return weights;
     }
-
 
     public void display(){
         for(int i=0;i<K;i++)
             for(int j=0;j<N;j++){
-                System.out.print(" "+w[i*N+j]);
+                System.out.print(" "+ weights[i*N+j]);
             }
         System.out.println("");
     }
-    public ArrayList<String> getWeightVector(){
 
-        ArrayList<String> weightList=new ArrayList();
-        for(int i=0;i<K;i++){
-            String weight="";
-            for(int j=0;j<N;j++){
-                weight=""+(w[i*N+j]);
-            }
-            weightList.add(weight.trim());
+    public byte[] generateKey(){
+        byte[] key = new byte[K*N];
+        int absMax = absMaxWeight();
+
+        for (int i = 0; i < K*N; i++) {
+            key[i] = (byte) ((255 * weights[i])/absMax);
         }
-        return weightList;
+
+        return key;
     }
 
-    public String makeKey(){
-        StringBuilder key=new StringBuilder();
-        int keySize=(int)(ABC.length()/(L*2+1));
-        int keyLength=(int)(K*N /keySize);
-        for(int i=1;i<keyLength;i++){
-            int k=1;
-            for(int j=(i-1)*keySize;j<i*keySize;j++){
-                k+=w[j]+L;
-            }
-            key.append(ABC.charAt(k));
+    private int absMaxWeight() {
+        int max = weights[0];
 
+        for (int i = 0; i < K*N; i++) {
+            if (weights[i] > max) {
+                max = Math.abs(weights[i]);
+            }
         }
-        return key.toString();
+
+        return max;
     }
-    static final String ABC="ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789abcdefghijklmnopqrstuvwxyz";
 }

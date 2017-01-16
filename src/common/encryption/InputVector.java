@@ -1,46 +1,31 @@
 package common.encryption;
 
-public class InputVector {
+import java.io.Serializable;
 
+public class InputVector implements Serializable {
     private int[] data;
-    private int k;
-    private int n;
-    /* methods of input vector */
 
-    public void setRandom(int k, int n) {
-        this.k = k;
-        this.n = n;
-        data = new int[k * n];
-        for (int i = 0; i < k * n; i++) {
-            data[i] = getRandomBit();
+    private InputVector() {}
+
+    public static InputVector generate(int K, int N) {
+        InputVector inputVector = new InputVector();
+
+        inputVector.data = new int[K * N];
+
+        for (int i = 0; i < K * N; i++) {
+            inputVector.data[i] = getRandomBit();
         }
+
+        return inputVector;
+    }
+
+
+    private static int getRandomBit() {
+        double randomNumber = Math.random() * 2;
+        return (randomNumber > 1) ? 1 : -1;
     }
 
     public int[] getData() {
         return data;
-    }
-
-    public String getBitString() {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < k * n - 1; i++) {
-            builder.append(data[i] + ",");
-        }
-        builder.append(data[data.length - 1]);
-        return builder.toString().trim();
-    }
-
-    public int[] convertToVector(String v) {
-        int[] dat = new int[k * n];
-        String[] words = v.split(",");
-        System.out.println("sixe of words:" + words.length);
-        for (int i = 0; i < k * n; i++) {
-            dat[i] = Integer.parseInt(words[i].trim());
-        }
-        return data;
-    }
-
-    public static int getRandomBit() {
-        double a = Math.random() * 2;
-        return (a > 1) ? 1 : -1;
     }
 }

@@ -19,5 +19,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="org.apache.commons:commons-lang3:3.5" level="project" />
   </component>
 </module>
