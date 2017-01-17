@@ -1,5 +1,6 @@
 package client.network;
 
+import common.encryption.TreeParityMachine;
 import common.network.ClientMessage;
 import common.network.SecureSession;
 import common.network.Session;
@@ -65,5 +66,10 @@ public abstract class Client {
 
     public Thread getMessageHandlingThread() {
         return messageHandlingThread;
+    }
+
+
+    public TreeParityMachine getTreeParityMachine() {
+        return serverSession.getTreeParityMachine();
     }
 }

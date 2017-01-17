@@ -5,6 +5,7 @@ import common.util.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -34,7 +35,9 @@ public class Session {
                 try {
                     ClientMessage message = (ClientMessage) in.readObject();
                     read(message);
-                } catch (IOException | InterruptedException | ClassNotFoundException e) {
+                }
+                catch (ClassCastException | StreamCorruptedException ignored) {}
+                catch (IOException | InterruptedException | ClassNotFoundException e) {
                     Log.print("Session reading thread exception: " + e.getMessage());
                     dispose();
                 }

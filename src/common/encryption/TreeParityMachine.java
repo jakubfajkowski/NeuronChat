@@ -122,12 +122,18 @@ public class TreeParityMachine {
         return (a == b) ? 1 : 0;
     }
 
-    public void display(){
-        for(int i=0;i<K;i++)
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+
+        for(int i=0;i<K;i++) {
             for(int j=0;j<N;j++){
-                System.out.print(" "+ weights[i*N+j]);
+                sb.append(String.format("%5d", weights[i*N + j]));
             }
-        System.out.println("");
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 
     public byte[] generateKey(){

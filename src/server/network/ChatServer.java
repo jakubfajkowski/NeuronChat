@@ -70,6 +70,7 @@ public class ChatServer extends Server {
         User user = message.getAddressee();
         SessionId addresseeSessionId = userSessionIdMap.get(user);
         send(addresseeSessionId, message);
+        Log.print("Sent to " + message);
     }
 
     private void login(ClientMessage message) {
@@ -90,6 +91,7 @@ public class ChatServer extends Server {
         }
 
         send(sessionId, message);
+        Log.print("Sent to " + message);
     }
 
     private void register(ClientMessage message) {
@@ -107,6 +109,7 @@ public class ChatServer extends Server {
             Log.print("%s - registration failed", user);
 
         send(sessionId, message);
+        Log.print("Sent to " + message);
     }
 
     @Override

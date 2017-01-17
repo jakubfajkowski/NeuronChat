@@ -1,10 +1,13 @@
 package client.network;
 
 import common.encryption.LearningParameters;
+import common.encryption.LearningRule;
+import common.encryption.TreeParityMachine;
 import common.network.ChatMessage;
 import common.network.ClientMessage;
 import common.network.ClientMessageMode;
 import common.network.SessionId;
+import common.util.PropertiesManager;
 import common.util.User;
 import common.util.UserCredentials;
 
@@ -26,6 +29,14 @@ public class ChatClient extends Client {
         switch (message.getClientMessageMode()) {
             case INITIALIZE_SESSION:
                 setServerSessionId((SessionId) message.getPayload());
+                sendInitializeKeyNegotiationRequest(new LearningParameters(
+                        LearningRule.RANDOM_WALK,
+                        4,
+                        8,
+                        4,
+                        250,
+                        1000
+                ));
                 break;
             default:
                 for (ChatClientListener c: chatClientListeners) {

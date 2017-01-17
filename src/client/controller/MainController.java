@@ -7,6 +7,7 @@ import client.network.ChatClientSingleton;
 import client.util.UserListViewItem;
 import common.encryption.LearningParameters;
 import common.encryption.LearningRule;
+import common.encryption.TreeParityMachine;
 import common.util.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -42,10 +44,8 @@ public class MainController extends Controller implements ChatClientListener {
     @FXML private Button sendButton;
     @FXML private Tab encryptionTab;
     @FXML private Button negotiateButton;
-    @FXML private TextArea logTextField;
+    @FXML private TextArea keyTextField;
     @FXML private TextArea matrixTextField;
-    @FXML private TextField serverAddressTextField;
-    @FXML private TextField serverPortTextField;
     @FXML private TextField renegotiateAfterTextField;
     @FXML private ChoiceBox learningRuleChoiceBox;
     @FXML private TextField testKeyIntervalTextView;
@@ -103,11 +103,18 @@ public class MainController extends Controller implements ChatClientListener {
                 ChatMessage receivedChatMessage = (ChatMessage)message.getPayload();
                 handleChatMessage(receivedChatMessage);
                 break;
-
             case AVAILABLE_USERS:
-                List<User> users = (ArrayList<User>) message.getPayload();
-                users.remove(client.getLocalUser());
-                populateOnlineUserListView(users);
+                try {
+                    List<User> users = (ArrayList<User>) message.getPayload();
+                    users.remove(client.getLocalUser());
+                    populateOnlineUserListView(users);
+                }
+                catch (ClassCastException ignored) {}
+                break;
+            case TEST_KEY:
+                TreeParityMachine tpm = client.getTreeParityMachine();
+                matrixTextField.setText(tpm.toString());
+                keyTextField.setText(DatatypeConverter.printHexBinary(tpm.generateKey()));
                 break;
         }
     }
@@ -132,8 +139,6 @@ public class MainController extends Controller implements ChatClientListener {
     }
 
     private void setDefaultProperties() {
-        serverAddressTextField.setText(PropertiesManager.getInstance().getProperty("ipAddress"));
-        serverPortTextField.setText(PropertiesManager.getInstance().getProperty("port"));
         renegotiateAfterTextField.setText(PropertiesManager.getInstance().getProperty("renegotiateAfter"));
         learningRuleChoiceBox.getSelectionModel().select(PropertiesManager.getInstance().getProperty("learningRule"));
         testKeyIntervalTextView.setText(PropertiesManager.getInstance().getProperty("testKeyInterval"));
@@ -144,18 +149,24 @@ public class MainController extends Controller implements ChatClientListener {
 
     public void onlineUsersListView_keyPressed(KeyEvent keyEvent) {
         if(keyEvent.getCode() == KeyCode.ENTER) {
-            UserListViewItem selectedUserListViewItem =
-                    (UserListViewItem) onlineUsersListView.getSelectionModel().getSelectedItem();
+            Object selectedItem = onlineUsersListView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                UserListViewItem selectedUserListViewItem =
+                        (UserListViewItem) selectedItem;
 
-            changeAddressee(selectedUserListViewItem);
+                changeAddressee(selectedUserListViewItem);
+            }
         }
     }
 
     public void onlineUsersListView_mouseClicked(MouseEvent mouseEvent) {
-        UserListViewItem selectedUserListViewItem =
-                (UserListViewItem) onlineUsersListView.getSelectionModel().getSelectedItem();
+        Object selectedItem = onlineUsersListView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            UserListViewItem selectedUserListViewItem =
+                    (UserListViewItem) selectedItem;
 
-        changeAddressee(selectedUserListViewItem);
+            changeAddressee(selectedUserListViewItem);
+        }
     }
 
     private void changeAddressee(UserListViewItem addressee) {
@@ -197,15 +208,13 @@ public class MainController extends Controller implements ChatClientListener {
     }
 
     public void saveButton_clicked(ActionEvent actionEvent) {
-        PropertiesManager.getInstance().setProperty("ipAddress", serverAddressTextField.getText());
-        PropertiesManager.getInstance().setProperty("port", serverPortTextField.getText());
         PropertiesManager.getInstance().setProperty("renegotiateAfter", renegotiateAfterTextField.getText());
         PropertiesManager.getInstance().setProperty("learningRule",
                 learningRuleChoiceBox.getSelectionModel().getSelectedItem().toString());
+        PropertiesManager.getInstance().setProperty("testKeyInterval", testKeyIntervalTextView.getText());
         PropertiesManager.getInstance().setProperty("kValue", kValueTextView.getText());
         PropertiesManager.getInstance().setProperty("nValue", nValueTextView.getText());
         PropertiesManager.getInstance().setProperty("lValue", lValueTextView.getText());
-        PropertiesManager.getInstance().setProperty("testKeyInterval", testKeyIntervalTextView.getText());
 
     }
 

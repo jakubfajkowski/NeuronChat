@@ -46,6 +46,8 @@ public class SecureSession extends Session {
                 write(message);
                 break;
             case TEST_KEY:
+                //trigger view update
+                super.read(new ClientMessage(ClientMessageMode.TEST_KEY, null, null));
                 onTestKeyReceived(message);
                 write(message);
                 break;
@@ -208,5 +210,9 @@ public class SecureSession extends Session {
                 getSessionId(), DatatypeConverter.printHexBinary(treeParityMachine.generateKey()));
         message.setPayload(null);
         key = treeParityMachine.generateKey();
+    }
+
+    public TreeParityMachine getTreeParityMachine() {
+        return treeParityMachine;
     }
 }

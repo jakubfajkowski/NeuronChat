@@ -5,7 +5,6 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -38,9 +37,8 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Button fx:id="negotiateButton" layoutX="14.0" layoutY="327.0" mnemonicParsing="false" onAction="#negotiateButton_clicked" prefHeight="30.0" prefWidth="183.0" text="Negotiate" />
-                        <TextArea fx:id="logTextField" layoutX="14.0" layoutY="243.0" prefHeight="84.0" prefWidth="360.0" />
-                        <TextArea fx:id="matrixTextField" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="222.0" prefWidth="360.0" />
-                        <ProgressBar layoutX="198.0" layoutY="329.0" prefHeight="27.0" prefWidth="177.0" progress="0.0" />
+                        <TextArea fx:id="keyTextField" editable="false" layoutX="14.0" layoutY="282.0" prefHeight="38.0" prefWidth="360.0" />
+                        <TextArea fx:id="matrixTextField" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="268.0" prefWidth="360.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -59,18 +57,6 @@
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="183.0">
-                           <children>
-                              <Label text="Server Address: " />
-                              <TextField fx:id="serverAddressTextField" prefHeight="25.0" prefWidth="97.0" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" layoutX="20.0" layoutY="20.0" prefHeight="41.0" prefWidth="183.0">
-                           <children>
-                              <Label text="Server Port: " />
-                              <TextField fx:id="serverPortTextField" prefHeight="25.0" prefWidth="97.0" />
-                           </children>
-                        </HBox>
                          <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="183.0">
                              <children>
                                  <Label text="Renegotiate after:  " />

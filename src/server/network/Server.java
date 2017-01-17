@@ -78,7 +78,6 @@ public abstract class Server implements SessionListener {
 
         if (session.isPresent()) {
             session.get().write(message);
-            Log.print("Sent to " + message);
         }
     }
 
