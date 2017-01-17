@@ -1,7 +1,9 @@
 package client.util;
 
 import common.util.User;
-
+/**
+ * Klasa obsługująca listę aktywnych użytkoników
+ */
 public class UserListViewItem {
     private User user;
     private String chatHistory;

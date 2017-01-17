@@ -1,7 +1,9 @@
 package common.encryption;
 
 import java.io.Serializable;
-
+/**
+ * Klasa odpowiedzialna za ustawienie parametrów przesyłane w wiadomości inicjalizacyjnej, potrzebnych do ustalenia zgodności sieci
+ */
 public class LearningParameters implements Serializable {
     private LearningRule learningRule;
     private int k;

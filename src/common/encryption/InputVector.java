@@ -2,6 +2,11 @@ package common.encryption;
 
 import java.io.Serializable;
 
+/**
+ * Klasa zawierająca wartości używane w komunikacji pomiędzy dwoma instancjami sieci neuronowych.
+ * Posiada możliwość losowej inicjalizacji wartości binarnych. Zawiera wektor wejściowy dla sieci neuronowej, a także
+ * przechowuje wartość wyjścia sieci neuronowej po przepuszczeniu wektora przez neurony sieci.
+ */
 public class InputVector implements Serializable {
     private int[] data;
     private int output;

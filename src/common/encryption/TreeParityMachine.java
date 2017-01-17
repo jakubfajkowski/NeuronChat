@@ -1,5 +1,11 @@
 package common.encryption;
 
+/**
+ * Klasa zajmująca się przechowywaniem struktury sieci neuronowej oraz jej parametrów. Posiada metody umożliwiające
+ * obliczenie wartości neuronu wyjściowego na podstawie wektora wejściowego, aktualizację wag neuronów zgodnie z
+ * przyjętą LearningRule, a także wygenerowanie bajtowego klucza o długości K*N będącego wagami neuronów przeskalowane
+ * do wartości całkowitych z przedziału <-128, 127> (zakres klasy byte).
+ */
 public class TreeParityMachine {
     private int[] inputVectorData;
     private int[] weights, hiddenLayer;
