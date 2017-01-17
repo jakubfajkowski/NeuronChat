@@ -1,5 +1,8 @@
 package common.network;
 
+/**
+ * Typ enumerowany pozwalający wysłać wiele typów wiadomości do serwera
+ */
 public enum ClientMessageMode {
     MESSAGE,
     AVAILABLE_USERS,

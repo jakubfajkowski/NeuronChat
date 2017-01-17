@@ -2,7 +2,9 @@ package common.network;
 
 import java.io.Serializable;
 import java.util.UUID;
-
+/**
+ * Klasa identyfikująca instancję aplikacji klienckiej.
+ */
 public class SessionId implements Serializable {
     private String uniqueId = UUID.randomUUID().toString();
 

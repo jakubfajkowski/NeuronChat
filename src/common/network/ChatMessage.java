@@ -4,7 +4,9 @@ import common.util.User;
 
 import java.io.Serializable;
 import java.util.Date;
-
+/**
+ * Klasa opisująca wiadomości tekstowe przesyłane między użytkownikami
+ **/
 public class ChatMessage implements Serializable {
     private User sender;
     private String text;

@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
-
+/**
+ * Klasa zawierająca logikę sesji pomiędzy aplikacją kliencką a serwerem
+ */
 public class Session {
     private SessionId sessionId;
     private Socket socket;
@@ -29,6 +31,9 @@ public class Session {
         runMessageReadingThread();
     }
 
+    /**
+     * Metoda uruchamiająca wątek służący do odbioru wiadomości przez serwer
+     */
     private void runMessageReadingThread() {
         messageReadingThread = new Thread(() -> {
             while (!disposed) {
@@ -48,10 +53,15 @@ public class Session {
         messageReadingThread.start();
     }
 
+    /**
+     * Metoda pobierająca wiadomość z kolejki
+     */
     protected void read(ClientMessage message) throws InterruptedException {
         messages.put(message);
     }
-
+    /**
+     * Metoda zapisująca wiadomość do kolejki
+     */
     public void write(ClientMessage message) {
         try {
             out.writeObject(message);
@@ -60,6 +70,9 @@ public class Session {
         }
     }
 
+    /**
+     * Metoda zrywająca połączenie
+     */
     public void dispose() {
         disposed = true;
         try {

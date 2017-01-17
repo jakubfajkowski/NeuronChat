@@ -16,6 +16,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Klasa zawierająca logika protokołu wymiany klucza
+ */
 public class SecureSession extends Session {
     private LearningRule learningRule;
     private int testKeyInterval;

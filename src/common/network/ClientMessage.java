@@ -9,7 +9,9 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
+/**
+ * Klasa opisująca, wysyłająca i dekodująca wiadomości wszelkiego typu wysyłanych do serwera
+ **/
 public class ClientMessage implements Serializable {
     static final long serialVersionUID = 1L;
 
