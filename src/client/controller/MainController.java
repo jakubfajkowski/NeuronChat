@@ -52,6 +52,7 @@ public class MainController extends Controller implements ChatClientListener {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setDefaultProperties();
+        initializeLearningRuleChoiceBox();
         client = ChatClientSingleton.getInstance().getClient();
         client.addListener(this);
         initializeOnlineUserListView();
@@ -64,6 +65,12 @@ public class MainController extends Controller implements ChatClientListener {
         kValueTextView.setText(PropertiesManager.getInstance().getProperty("kValue"));
         nValueTextView.setText(PropertiesManager.getInstance().getProperty("nValue"));
         lValueTextView.setText(PropertiesManager.getInstance().getProperty("lValue"));
+    }
+
+    private void initializeLearningRuleChoiceBox() {
+        learningRuleChoiceBox.getItems().add(LearningRule.HEBBIAN.toString());
+        learningRuleChoiceBox.getItems().add(LearningRule.ANTI_HEBBIAN.toString());
+        learningRuleChoiceBox.getItems().add(LearningRule.RANDOM_WALK.toString());
     }
 
     private void initializeOnlineUserListView() {
@@ -242,14 +249,22 @@ public class MainController extends Controller implements ChatClientListener {
     }
 
     public void saveButton_clicked(ActionEvent actionEvent) {
-        PropertiesManager.getInstance().setProperty("renegotiateAfter", renegotiateAfterTextField.getText());
-        PropertiesManager.getInstance().setProperty("learningRule",
-                learningRuleChoiceBox.getSelectionModel().getSelectedItem().toString());
-        PropertiesManager.getInstance().setProperty("testKeyInterval", testKeyIntervalTextView.getText());
-        PropertiesManager.getInstance().setProperty("kValue", kValueTextView.getText());
-        PropertiesManager.getInstance().setProperty("nValue", nValueTextView.getText());
-        PropertiesManager.getInstance().setProperty("lValue", lValueTextView.getText());
+        int k = Integer.valueOf(kValueTextView.getText());
+        int n = Integer.valueOf(nValueTextView.getText());
 
+        if (k*n == 16 || k*n == 24 || k*n == 32) {
+            PropertiesManager.getInstance().setProperty("renegotiateAfter", renegotiateAfterTextField.getText());
+            PropertiesManager.getInstance().setProperty("learningRule",
+                    learningRuleChoiceBox.getSelectionModel().getSelectedItem().toString());
+            PropertiesManager.getInstance().setProperty("testKeyInterval", testKeyIntervalTextView.getText());
+            PropertiesManager.getInstance().setProperty("kValue", kValueTextView.getText());
+            PropertiesManager.getInstance().setProperty("nValue", nValueTextView.getText());
+            PropertiesManager.getInstance().setProperty("lValue", lValueTextView.getText());
+        }
+        else {
+            ErrorAlert.show(k*n*8 + " bits is not a valid key length.");
+            setDefaultProperties();
+        }
     }
 
     public void reconnectButton_clicked(ActionEvent actionEvent) {
