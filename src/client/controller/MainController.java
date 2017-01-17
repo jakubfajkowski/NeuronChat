@@ -10,7 +10,6 @@ import common.encryption.LearningRule;
 import common.encryption.TreeParityMachine;
 import common.util.Log;
 import common.util.User;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,7 +23,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -32,18 +30,15 @@ import java.net.URL;
 import java.util.*;
 
 public class MainController extends Controller implements ChatClientListener {
-    private ChatClient client = ChatClientSingleton.getInstance().getClient();
+    private ChatClient client;
 
     private UserListViewItem currentChatPartner;
     private ObservableList<UserListViewItem> onlineUsers;
 
     @FXML private ListView onlineUsersListView;
     @FXML private Label partnerNameLabel;
-    @FXML private Tab conversationTab;
     @FXML private TextArea outputTextArea;
     @FXML private TextArea inputTextArea;
-    @FXML private Button sendButton;
-    @FXML private Tab encryptionTab;
     @FXML private ToggleButton negotiateButton;
     @FXML private TextArea keyTextField;
     @FXML private TextArea matrixTextField;
@@ -53,13 +48,25 @@ public class MainController extends Controller implements ChatClientListener {
     @FXML private TextField kValueTextView;
     @FXML private TextField nValueTextView;
     @FXML private TextField lValueTextView;
-    @FXML private Button saveButton;
-    @FXML private Button reconnectButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setDefaultProperties();
+        client = ChatClientSingleton.getInstance().getClient();
         client.addListener(this);
+        initializeOnlineUserListView();
+    }
+
+    private void setDefaultProperties() {
+        renegotiateAfterTextField.setText(PropertiesManager.getInstance().getProperty("renegotiateAfter"));
+        learningRuleChoiceBox.getSelectionModel().select(PropertiesManager.getInstance().getProperty("learningRule"));
+        testKeyIntervalTextView.setText(PropertiesManager.getInstance().getProperty("testKeyInterval"));
+        kValueTextView.setText(PropertiesManager.getInstance().getProperty("kValue"));
+        nValueTextView.setText(PropertiesManager.getInstance().getProperty("nValue"));
+        lValueTextView.setText(PropertiesManager.getInstance().getProperty("lValue"));
+    }
+
+    private void initializeOnlineUserListView() {
         onlineUsers = FXCollections.observableArrayList();
         onlineUsersListView.setItems(onlineUsers);
 
@@ -82,49 +89,28 @@ public class MainController extends Controller implements ChatClientListener {
                 }
             }
         });
-
-
-    }
-
-    private void populateOnlineUserListView(List<User> users) {
-        for (User u: users) {
-            UserListViewItem userListViewItem = new UserListViewItem(u);
-
-            if (!onlineUsers.contains(userListViewItem))
-                onlineUsers.add(userListViewItem);
-        }
-
-        onlineUsers.sort(Comparator.comparing(u -> u.getUser().getUsername()));
     }
 
     @Override
     public void handleClientMessage(ClientMessage message) {
         switch (message.getClientMessageMode()) {
             case MESSAGE:
-                ChatMessage receivedChatMessage = (ChatMessage)message.getPayload();
-                handleChatMessage(receivedChatMessage);
+                handleChatMessage(message);
                 break;
             case AVAILABLE_USERS:
-                try {
-                    List<User> users = (ArrayList<User>) message.getPayload();
-                    users.remove(client.getLocalUser());
-                    populateOnlineUserListView(users);
-                }
-                catch (ClassCastException ignored) {
-                    Log.print("Unable to read received online user list");
-                }
+                onAvailableUsersReceived(message);
                 break;
             case TEST_KEY:
-                TreeParityMachine tpm = client.getTreeParityMachine();
-                matrixTextField.setText(tpm.toString());
-                keyTextField.setText(DatatypeConverter.printHexBinary(tpm.generateKey()));
+                onTestKeyReceived();
                 break;
         }
     }
 
-    private void handleChatMessage(ChatMessage message) {
+    private void handleChatMessage(ClientMessage message) {
+        ChatMessage receivedChatMessage = (ChatMessage)message.getPayload();
+
         Optional<UserListViewItem> u = onlineUsers.stream().
-                filter(o -> o.getUser().equals(message.getSender())).
+                filter(o -> o.getUser().equals(receivedChatMessage.getSender())).
                 findFirst();
 
         if (u.isPresent()) {
@@ -132,8 +118,7 @@ public class MainController extends Controller implements ChatClientListener {
             userListViewItem.appendChatHistory(message.toString());
 
             if (currentChatPartner != userListViewItem) {
-                userListViewItem.setUnseenMessage(true);
-                onlineUsersListView.refresh();
+                enableNotification(userListViewItem);
             }
             else {
                 outputTextArea.setText(userListViewItem.getChatHistory());
@@ -141,13 +126,50 @@ public class MainController extends Controller implements ChatClientListener {
         }
     }
 
-    private void setDefaultProperties() {
-        renegotiateAfterTextField.setText(PropertiesManager.getInstance().getProperty("renegotiateAfter"));
-        learningRuleChoiceBox.getSelectionModel().select(PropertiesManager.getInstance().getProperty("learningRule"));
-        testKeyIntervalTextView.setText(PropertiesManager.getInstance().getProperty("testKeyInterval"));
-        kValueTextView.setText(PropertiesManager.getInstance().getProperty("kValue"));
-        nValueTextView.setText(PropertiesManager.getInstance().getProperty("nValue"));
-        lValueTextView.setText(PropertiesManager.getInstance().getProperty("lValue"));
+    private void enableNotification(UserListViewItem userListViewItem) {
+        userListViewItem.setUnseenMessage(true);
+        onlineUsersListView.refresh();
+    }
+
+    private void onAvailableUsersReceived(ClientMessage message) {
+        try {
+            List<User> users = (ArrayList<User>) message.getPayload();
+            users.remove(client.getLocalUser());
+            updateOnlineUsersListView(users);
+        }
+        catch (ClassCastException ignored) {
+            Log.print("Unable to read received online user list");
+        }
+    }
+
+    private void updateOnlineUsersListView(List<User> users) {
+        insertNewConnectedUsers(users);
+        deleteDisconnectedUsers(users);
+        onlineUsers.sort(Comparator.comparing(u -> u.getUser().getUsername()));
+    }
+
+    private void insertNewConnectedUsers(List<User> users) {
+        for (User u: users) {
+            UserListViewItem userListViewItem = new UserListViewItem(u);
+
+            if (!onlineUsers.contains(userListViewItem))
+                onlineUsers.add(userListViewItem);
+        }
+    }
+
+    private void deleteDisconnectedUsers(List<User> users) {
+        for (UserListViewItem u: onlineUsers) {
+            User user = u.getUser();
+
+            if (!users.contains(user))
+                onlineUsers.remove(u);
+        }
+    }
+
+    private void onTestKeyReceived() {
+        TreeParityMachine tpm = client.getTreeParityMachine();
+        matrixTextField.setText(tpm.toString());
+        keyTextField.setText(DatatypeConverter.printHexBinary(tpm.generateKey()));
     }
 
     public void onlineUsersListView_keyPressed(KeyEvent keyEvent) {
@@ -157,7 +179,7 @@ public class MainController extends Controller implements ChatClientListener {
                 UserListViewItem selectedUserListViewItem =
                         (UserListViewItem) selectedItem;
 
-                changeAddressee(selectedUserListViewItem);
+                changeChatPartner(selectedUserListViewItem);
             }
         }
     }
@@ -168,18 +190,25 @@ public class MainController extends Controller implements ChatClientListener {
             UserListViewItem selectedUserListViewItem =
                     (UserListViewItem) selectedItem;
 
-            changeAddressee(selectedUserListViewItem);
+            changeChatPartner(selectedUserListViewItem);
         }
     }
 
-    private void changeAddressee(UserListViewItem addressee) {
-        User user = addressee.getUser();
-        currentChatPartner = addressee;
-        partnerNameLabel.setText(user.getUsername());
-        outputTextArea.setText(addressee.getChatHistory());
-        outputTextArea.appendText("");
+    private void changeChatPartner(UserListViewItem chatPartner) {
+        currentChatPartner = chatPartner;
+        partnerNameLabel.setText(chatPartner.getUser().getUsername());
+        outputTextArea.setText(chatPartner.getChatHistory());
+        scrollDown();
 
-        addressee.setUnseenMessage(false);
+        disableNotification(chatPartner);
+    }
+
+    private void scrollDown() {
+        outputTextArea.appendText("");
+    }
+
+    private void disableNotification(UserListViewItem userListViewItem) {
+        userListViewItem.setUnseenMessage(false);
         onlineUsersListView.refresh();
     }
 
@@ -226,7 +255,7 @@ public class MainController extends Controller implements ChatClientListener {
     public void reconnectButton_clicked(ActionEvent actionEvent) {
         try {
             client.stop();
-            client = ChatClientSingleton.getInstance().connectToServer();
+            //ChatClientSingleton.getInstance().initializeNewClientInstance();
 
         } catch (IOException e) {
             ErrorAlert.show("Client exception: " + e.getMessage());

@@ -15,7 +15,7 @@ public class ClientMessage implements Serializable {
 
     private ClientMessageMode clientMessageMode;
 
-    private User addressee;
+    private Serializable addressee;
     private Serializable payload;
 
     public ClientMessage(ClientMessageMode clientMessageMode, User addressee, Serializable payload) {
@@ -32,6 +32,14 @@ public class ClientMessage implements Serializable {
         payload = Security.decryptObject((byte[]) payload, key);
     }
 
+    public void encryptAddressee(byte[] key) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        addressee = Security.encryptObject(addressee, key);
+    }
+
+    public void decryptAddressee(byte[] key) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        addressee = Security.decryptObject((byte[]) addressee, key);
+    }
+
     @Override
     public String toString() {
         return addressee + " message " + clientMessageMode;
@@ -45,7 +53,7 @@ public class ClientMessage implements Serializable {
         return clientMessageMode;
     }
 
-    public User getAddressee() {
+    public Serializable getAddressee() {
         return addressee;
     }
 

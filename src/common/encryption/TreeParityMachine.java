@@ -40,6 +40,7 @@ public class TreeParityMachine {
 
         return output;
     }
+
     public void updateWeight(LearningRule learningRule){
         switch (learningRule) {
             case HEBBIAN:

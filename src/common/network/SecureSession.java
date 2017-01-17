@@ -66,6 +66,7 @@ public class SecureSession extends Session {
 
     private void decryptMessage(ClientMessage message, byte[] key) {
         try {
+            message.decryptAddressee(key);
             message.decryptPayload(key);
         } catch (IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException e) {
             Log.print("Decryption error: " + e.getMessage());
@@ -104,6 +105,7 @@ public class SecureSession extends Session {
 
     private void encryptMessage(ClientMessage message, byte[] key) {
         try {
+            message.encryptAddressee(key);
             message.encryptPayload(key);
         }
         catch (IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException e) {

@@ -47,7 +47,7 @@ public class ChatServer extends Server {
     private void sendToAll(ClientMessage message) {
         for (SessionId s: userSessionIdMap.values()) {
             send(s, message);
-            Log.print("Broadcast %s to %d user(s)", message.getClientMessageMode(), userSessionIdMap.size());
+            //Log.print("Broadcast %s to %d user(s)", message.getClientMessageMode(), userSessionIdMap.size());
         }
     }
 
@@ -67,10 +67,10 @@ public class ChatServer extends Server {
     }
 
     private void passMessage(ClientMessage message) {
-        User user = message.getAddressee();
+        User user = (User) message.getAddressee();
         SessionId addresseeSessionId = userSessionIdMap.get(user);
-        send(addresseeSessionId, message);
         Log.print("Sent to " + message);
+        send(addresseeSessionId, message);
     }
 
     private void login(ClientMessage message) {
@@ -90,8 +90,8 @@ public class ChatServer extends Server {
             Log.print("%s - login failed", user);
         }
 
-        send(sessionId, message);
         Log.print("Sent to " + message);
+        send(sessionId, message);
     }
 
     private void register(ClientMessage message) {
@@ -108,8 +108,8 @@ public class ChatServer extends Server {
         else
             Log.print("%s - registration failed", user);
 
-        send(sessionId, message);
         Log.print("Sent to " + message);
+        send(sessionId, message);
     }
 
     @Override
