@@ -1,5 +1,6 @@
 package client;
 
+import client.network.ChatClientSingleton;
 import common.util.PropertiesManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,13 +17,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         PropertiesManager.getInstance().setFileName("options");
-
-        Parent root = FXMLLoader.load(getClass().getResource("/client/loginView.fxml"));
         Main.primaryStage = primaryStage;
-        primaryStage.setTitle(APPLICATION_NAME);
-        primaryStage.setScene(new Scene(root, 250, 110));
-        primaryStage.setResizable(false);
-        Main.primaryStage.show();
+        ChatClientSingleton.getInstance().initializeNewClientInstance();
     }
 
     public static Stage getPrimaryStage() {
@@ -31,10 +27,5 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    public static void restart() throws IOException {
-        Runtime.getRuntime().exec("java -jar " + APPLICATION_NAME + ".jar");
-        System.exit(0);
     }
 }

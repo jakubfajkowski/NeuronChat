@@ -255,7 +255,7 @@ public class MainController extends Controller implements ChatClientListener {
     public void reconnectButton_clicked(ActionEvent actionEvent) {
         try {
             client.stop();
-            //ChatClientSingleton.getInstance().initializeNewClientInstance();
+            ChatClientSingleton.getInstance().initializeNewClientInstance();
 
         } catch (IOException e) {
             ErrorAlert.show("Client exception: " + e.getMessage());

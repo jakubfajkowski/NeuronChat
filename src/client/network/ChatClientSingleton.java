@@ -1,9 +1,16 @@
 package client.network;
 
+import client.Main;
 import client.alert.ConnectionAlert;
 import common.util.PropertiesManager;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.io.IOException;
+
+import static client.Main.APPLICATION_NAME;
 
 public class ChatClientSingleton {
     private ChatClient client;
@@ -14,11 +21,28 @@ public class ChatClientSingleton {
         return ourInstance;
     }
 
-    private ChatClientSingleton() {
+    private ChatClientSingleton() {}
+
+    public void initializeNewClientInstance() {
         connectToServer();
+        showLoginDialog();
     }
 
-    public ChatClient connectToServer() {
+    private void showLoginDialog() {
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/client/loginView.fxml"));
+            Stage primaryStage = Main.getPrimaryStage();
+            primaryStage.setTitle(APPLICATION_NAME);
+            primaryStage.setScene(new Scene(root, 250, 110));
+            primaryStage.setResizable(false);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ChatClient connectToServer() {
         String serverIpAddress = PropertiesManager.getInstance().getProperty("ipAddress");
         int serverPort = Integer.parseInt(PropertiesManager.getInstance().getProperty("port"));
 
