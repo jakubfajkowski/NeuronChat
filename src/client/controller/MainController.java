@@ -8,6 +8,7 @@ import client.util.UserListViewItem;
 import common.encryption.LearningParameters;
 import common.encryption.LearningRule;
 import common.encryption.TreeParityMachine;
+import common.util.Log;
 import common.util.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -109,7 +110,9 @@ public class MainController extends Controller implements ChatClientListener {
                     users.remove(client.getLocalUser());
                     populateOnlineUserListView(users);
                 }
-                catch (ClassCastException ignored) {}
+                catch (ClassCastException ignored) {
+                    Log.print("Unable to read received online user list");
+                }
                 break;
             case TEST_KEY:
                 TreeParityMachine tpm = client.getTreeParityMachine();
