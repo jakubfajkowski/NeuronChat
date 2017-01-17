@@ -1,7 +1,9 @@
 package common.util;
 
 import java.io.Serializable;
-
+/**
+ * Klasa odpowiadająca za wyświetlanie i udostępnianie informacji o użytkowniku
+ */
 public class User implements Serializable {
     static final long serialVersionUID = 1L;
 

@@ -4,7 +4,9 @@ import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.util.Properties;
-
+/**
+ * Klasa odpowiadająca za pobieranie i ustawianie wartości w pliku properties
+ */
 public class PropertiesManager {
     private String fileName;
     private Properties properties = new Properties();
