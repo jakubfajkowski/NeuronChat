@@ -11,7 +11,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 import static client.Main.APPLICATION_NAME;
-
+/**
+ * Klasa odpowiadająca za uruchomienie aplikacji klienckiej
+ */
 public class ChatClientSingleton {
     private ChatClient client;
 
@@ -27,7 +29,9 @@ public class ChatClientSingleton {
         connectToServer();
         showLoginDialog();
     }
-
+    /**
+     * Funkcja pokazująca okno logowania
+     */
     private void showLoginDialog() {
         Parent root = null;
         try {
@@ -41,7 +45,9 @@ public class ChatClientSingleton {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Funkcja inicjalizująca połączenie z serwerem
+     */
     private ChatClient connectToServer() {
         String serverIpAddress = PropertiesManager.getInstance().getProperty("ipAddress");
         int serverPort = Integer.parseInt(PropertiesManager.getInstance().getProperty("port"));

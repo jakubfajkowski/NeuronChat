@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class Main extends Application {
     private static Stage primaryStage;
-    public static final String APPLICATION_NAME = "MiniChatApp";
+    public static final String APPLICATION_NAME = "Neuron Chat";
 
     @Override
     public void start(Stage primaryStage) throws Exception{

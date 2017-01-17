@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
-
+/**
+ * Klasa odpowiadająca za operacje wykonywane z poziomu operacji klienckiej
+ */
 public abstract class Client {
     private SecureSession serverSession;
     private LinkedBlockingQueue<ClientMessage> messages;
@@ -29,6 +31,9 @@ public abstract class Client {
         runMessageHandlingThread();
     }
 
+    /**
+     * Metoda odpowiadająca za uruchamianie wątku odpowiadającego za obsługę wiadomości przychodzących
+     */
     private void runMessageHandlingThread() {
         messageHandlingThread = new Thread(() -> {
             while (running) {
@@ -45,12 +50,19 @@ public abstract class Client {
         messageHandlingThread.start();
     }
 
+
     protected abstract void receiveMessage(ClientMessage message);
 
+    /**
+     * Metoda odpowiadająca za wysyłanie wiadomości
+     */
     protected void send(ClientMessage message) {
         serverSession.write(message);
     }
 
+    /**
+     * Metoda odpowiadająca za zatrzymywanie trwającej sesji
+     */
     public void stop() throws IOException {
         running = false;
         serverSession.dispose();
@@ -67,7 +79,6 @@ public abstract class Client {
     public Thread getMessageHandlingThread() {
         return messageHandlingThread;
     }
-
 
     public TreeParityMachine getTreeParityMachine() {
         return serverSession.getTreeParityMachine();
