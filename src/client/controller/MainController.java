@@ -5,6 +5,8 @@ import client.alert.InfoAlert;
 import client.network.ChatClient;
 import client.network.ChatClientSingleton;
 import client.util.UserListViewItem;
+import common.encryption.LearningParameters;
+import common.encryption.LearningRule;
 import common.util.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -44,7 +46,12 @@ public class MainController extends Controller implements ChatClientListener {
     @FXML private TextArea matrixTextField;
     @FXML private TextField serverAddressTextField;
     @FXML private TextField serverPortTextField;
-    @FXML private TextField usernameTextField;
+    @FXML private TextField renegotiateAfterTextField;
+    @FXML private ChoiceBox learningRuleChoiceBox;
+    @FXML private TextField testKeyIntervalTextView;
+    @FXML private TextField kValueTextView;
+    @FXML private TextField nValueTextView;
+    @FXML private TextField lValueTextView;
     @FXML private Button saveButton;
     @FXML private Button reconnectButton;
 
@@ -127,7 +134,12 @@ public class MainController extends Controller implements ChatClientListener {
     private void setDefaultProperties() {
         serverAddressTextField.setText(PropertiesManager.getInstance().getProperty("ipAddress"));
         serverPortTextField.setText(PropertiesManager.getInstance().getProperty("port"));
-        usernameTextField.setText(PropertiesManager.getInstance().getProperty("username"));
+        renegotiateAfterTextField.setText(PropertiesManager.getInstance().getProperty("renegotiateAfter"));
+        learningRuleChoiceBox.getSelectionModel().select(PropertiesManager.getInstance().getProperty("learningRule"));
+        testKeyIntervalTextView.setText(PropertiesManager.getInstance().getProperty("testKeyInterval"));
+        kValueTextView.setText(PropertiesManager.getInstance().getProperty("kValue"));
+        nValueTextView.setText(PropertiesManager.getInstance().getProperty("nValue"));
+        lValueTextView.setText(PropertiesManager.getInstance().getProperty("lValue"));
     }
 
     public void onlineUsersListView_keyPressed(KeyEvent keyEvent) {
@@ -172,31 +184,29 @@ public class MainController extends Controller implements ChatClientListener {
     }
 
     public void negotiateButton_clicked(ActionEvent actionEvent) {
-    }
+        LearningParameters lp = new LearningParameters(
+                LearningRule.valueOf(learningRuleChoiceBox.getSelectionModel().getSelectedItem().toString()),
+                Integer.valueOf(kValueTextView.getText()),
+                Integer.valueOf(nValueTextView.getText()),
+                Integer.valueOf(lValueTextView.getText()),
+                Integer.valueOf(testKeyIntervalTextView.getText()),
+                Integer.valueOf(renegotiateAfterTextField.getText())
+        );
 
-    public void usernameTextField_mouseClicked(MouseEvent mouseEvent) {
-        usernameTextField.clear();
-    }
-
-    public void serverPortTextField_mouseClicked(MouseEvent mouseEvent) {
-        serverPortTextField.clear();
-    }
-
-    public void serverAddressTextField_mouseClicked(MouseEvent mouseEvent) {
-        serverAddressTextField.clear();
+        client.sendInitializeKeyNegotiationRequest(lp);
     }
 
     public void saveButton_clicked(ActionEvent actionEvent) {
-        try {
-            Runtime.getRuntime().exec("java -jar myApp.jar");
-            PropertiesManager.getInstance().setProperty("ipAddress", serverAddressTextField.getText());
-            PropertiesManager.getInstance().setProperty("port", serverPortTextField.getText());
-            PropertiesManager.getInstance().setProperty("username", usernameTextField.getText());
+        PropertiesManager.getInstance().setProperty("ipAddress", serverAddressTextField.getText());
+        PropertiesManager.getInstance().setProperty("port", serverPortTextField.getText());
+        PropertiesManager.getInstance().setProperty("renegotiateAfter", renegotiateAfterTextField.getText());
+        PropertiesManager.getInstance().setProperty("learningRule",
+                learningRuleChoiceBox.getSelectionModel().getSelectedItem().toString());
+        PropertiesManager.getInstance().setProperty("kValue", kValueTextView.getText());
+        PropertiesManager.getInstance().setProperty("nValue", nValueTextView.getText());
+        PropertiesManager.getInstance().setProperty("lValue", lValueTextView.getText());
+        PropertiesManager.getInstance().setProperty("testKeyInterval", testKeyIntervalTextView.getText());
 
-            System.exit(0);
-        } catch (IOException e) {
-            ErrorAlert.show("Unable to restart application: " + e.getMessage());
-        }
     }
 
     public void reconnectButton_clicked(ActionEvent actionEvent) {

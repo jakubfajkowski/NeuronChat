@@ -4,6 +4,7 @@ public class TreeParityMachine {
     private int[] inputVectorData;
     private int[] weights, hiddenLayer;
     private int K, N, L;
+
     private int output;
     private int counter;
 
@@ -24,6 +25,8 @@ public class TreeParityMachine {
     }
 
     public int computeOutput(InputVector inputVector) {
+        counter++;
+
         inputVectorData = inputVector.getData();
         output=1;
         for (int i = 0; i < K; i++) {
@@ -38,8 +41,6 @@ public class TreeParityMachine {
         return output;
     }
     public void updateWeight(LearningRule learningRule){
-        counter++;
-
         switch (learningRule) {
             case HEBBIAN:
                 applyHebbianLearningRule();
@@ -158,6 +159,10 @@ public class TreeParityMachine {
 
     public int getInputVectorLength() {
         return K*N;
+    }
+
+    public int getOutput() {
+        return output;
     }
 
     public int getCounter() {

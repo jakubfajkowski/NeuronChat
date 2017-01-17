@@ -35,6 +35,7 @@ public class Session {
                     ClientMessage message = (ClientMessage) in.readObject();
                     read(message);
                 } catch (IOException | InterruptedException | ClassNotFoundException e) {
+                    Log.print("Session reading thread exception: " + e.getMessage());
                     dispose();
                 }
             }

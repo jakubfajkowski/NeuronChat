@@ -82,13 +82,6 @@ public abstract class Server implements SessionListener {
         }
     }
 
-    protected void sendToAll(ClientMessage message) {
-        for (Session s: sessions) {
-            s.write(message);
-            Log.print("Broadcast %s to %d user(s)", message.getClientMessageMode(), sessions.size());
-        }
-    }
-
     public void stop() {
         running = false;
 

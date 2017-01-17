@@ -44,6 +44,13 @@ public class ChatServer extends Server {
         sendToAll(message);
     }
 
+    private void sendToAll(ClientMessage message) {
+        for (SessionId s: userSessionIdMap.values()) {
+            send(s, message);
+            Log.print("Broadcast %s to %d user(s)", message.getClientMessageMode(), userSessionIdMap.size());
+        }
+    }
+
     @Override
     protected void handleMessage(ClientMessage message) {
         switch (message.getClientMessageMode()) {

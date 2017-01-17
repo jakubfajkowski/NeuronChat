@@ -1,5 +1,6 @@
 package client.network;
 
+import common.encryption.LearningParameters;
 import common.network.ChatMessage;
 import common.network.ClientMessage;
 import common.network.ClientMessageMode;
@@ -38,11 +39,11 @@ public class ChatClient extends Client {
         chatClientListeners.add(chatClientListener);
     }
 
-    public void sendInitializeKeyNegotiationRequest(int K, int N, int L) {
+    public void sendInitializeKeyNegotiationRequest(LearningParameters learningParameters) {
         ClientMessage messageToSend = new ClientMessage(
                 ClientMessageMode.INITIALIZE_KEY_NEGOTIATION,
                 null,
-                new int[]{K, N, L}
+                learningParameters
         );
         send(messageToSend);
     }
