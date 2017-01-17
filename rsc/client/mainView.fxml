@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ToggleButton?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controller.MainController">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
@@ -36,7 +37,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="negotiateButton" layoutX="14.0" layoutY="327.0" mnemonicParsing="false" onAction="#negotiateButton_clicked" prefHeight="30.0" prefWidth="183.0" text="Negotiate" />
+                        <ToggleButton fx:id="negotiateButton" layoutX="14.0" layoutY="327.0" mnemonicParsing="false" onAction="#negotiateButton_clicked" prefHeight="30.0" prefWidth="359.0" text="Negotiate" />
                         <TextArea fx:id="keyTextField" editable="false" layoutX="14.0" layoutY="282.0" prefHeight="38.0" prefWidth="360.0" />
                         <TextArea fx:id="matrixTextField" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="268.0" prefWidth="360.0" />
                      </children>

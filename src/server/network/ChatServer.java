@@ -37,10 +37,10 @@ public class ChatServer extends Server {
 
     private void broadcastUserList() {
         ClientMessage message = new ClientMessage(ClientMessageMode.AVAILABLE_USERS, null, null);
-        List<User> users = new ArrayList<>();
+        ArrayList<User> users = new ArrayList<>();
         users.addAll(userSessionIdMap.keySet());
 
-        message.setPayload((Serializable) users);
+        message.setPayload(users);
         sendToAll(message);
     }
 

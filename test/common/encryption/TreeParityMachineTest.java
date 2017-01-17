@@ -28,7 +28,7 @@ public class TreeParityMachineTest {
                 b.updateWeight(LearningRule.RANDOM_WALK);
             }
 
-            Log.print("MSE: " + TreeParityMachine.synchronizationStatus(a.getWeights(), b.getWeights()));
+            Log.print("Percent: " + TreeParityMachine.synchronizationStatus(a.getWeights(), b.getWeights()));
         } while (TreeParityMachine.meanSquaredError(a.getWeights(), b.getWeights()) != 0);
 
         Log.print("Synchronized in %d iterations.", a.getCounter());

@@ -3,15 +3,18 @@ package common.encryption;
 import common.network.ClientMessage;
 import common.network.ClientMessageMode;
 import common.network.SessionId;
+import common.util.User;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.Assert.*;
 
 public class SecurityTest {
     private Random random = new Random();
-    private final int numberOfIterations = 10000;
+    private final int numberOfIterations = 1000;
 
     @Test
     public void encryptAndDecryptBytesTest() throws Exception {
@@ -67,8 +70,12 @@ public class SecurityTest {
 
 
         for (int i = 0; i < numberOfIterations; i++) {
-            SessionId expected = new SessionId();
-            ClientMessage clientMessage = new ClientMessage(
+            ArrayList<User> expected = new ArrayList<>();
+            for (int j = 0; j < i; j++) {
+                expected.add(new User("TEST" + i));
+            }
+
+            ClientMessage clientMessage = new ClientMessage (
                     ClientMessageMode.TEST_KEY,
                     null,
                     expected
@@ -77,9 +84,11 @@ public class SecurityTest {
             clientMessage.encryptPayload(key);
             clientMessage.decryptPayload(key);
 
-            SessionId actual = (SessionId) clientMessage.getPayload();
+            ArrayList<User> actual = (ArrayList<User>) clientMessage.getPayload();
 
-            assertEquals(expected, actual);
+            for (int j = 0; j < i; j++) {
+                assertEquals(expected.get(j), actual.get(j));
+            }
         }
     }
 }

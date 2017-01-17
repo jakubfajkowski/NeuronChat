@@ -54,6 +54,9 @@ public class SecureSession extends Session {
             case FINALIZE_KEY_NEGOTIATION:
                 onFinalizeKeyNegotiation(message);
                 break;
+            case AVAILABLE_USERS:
+                super.read(message);
+                break;
             default:
                 if (key != null) decryptMessage(message, key);
                 super.read(message);
@@ -88,6 +91,8 @@ public class SecureSession extends Session {
                 break;
             case FINALIZE_KEY_NEGOTIATION:
                 onFinalizeKeyNegotiation(message);
+                break;
+            case AVAILABLE_USERS:
                 break;
             default:
                 if (key != null) encryptMessage(message, key);

@@ -43,7 +43,7 @@ public class MainController extends Controller implements ChatClientListener {
     @FXML private TextArea inputTextArea;
     @FXML private Button sendButton;
     @FXML private Tab encryptionTab;
-    @FXML private Button negotiateButton;
+    @FXML private ToggleButton negotiateButton;
     @FXML private TextArea keyTextField;
     @FXML private TextArea matrixTextField;
     @FXML private TextField renegotiateAfterTextField;
@@ -195,16 +195,18 @@ public class MainController extends Controller implements ChatClientListener {
     }
 
     public void negotiateButton_clicked(ActionEvent actionEvent) {
-        LearningParameters lp = new LearningParameters(
-                LearningRule.valueOf(learningRuleChoiceBox.getSelectionModel().getSelectedItem().toString()),
-                Integer.valueOf(kValueTextView.getText()),
-                Integer.valueOf(nValueTextView.getText()),
-                Integer.valueOf(lValueTextView.getText()),
-                Integer.valueOf(testKeyIntervalTextView.getText()),
-                Integer.valueOf(renegotiateAfterTextField.getText())
-        );
+        if (negotiateButton.isSelected()) {
+            LearningParameters lp = new LearningParameters(
+                    LearningRule.valueOf(learningRuleChoiceBox.getSelectionModel().getSelectedItem().toString()),
+                    Integer.valueOf(kValueTextView.getText()),
+                    Integer.valueOf(nValueTextView.getText()),
+                    Integer.valueOf(lValueTextView.getText()),
+                    Integer.valueOf(testKeyIntervalTextView.getText()),
+                    Integer.valueOf(renegotiateAfterTextField.getText())
+            );
 
-        client.sendInitializeKeyNegotiationRequest(lp);
+            client.sendInitializeKeyNegotiationRequest(lp);
+        }
     }
 
     public void saveButton_clicked(ActionEvent actionEvent) {
