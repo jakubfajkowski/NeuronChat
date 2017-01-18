@@ -3,6 +3,9 @@ package server.network;
 import common.util.PropertiesManager;
 import common.util.UserCredentials;
 
+/**
+ * Klasa odpowiadająca za uwierzytelnienie użytkownika podczas logowania
+ */
 public class AuthenticationService {
     private PropertiesManager propertiesManager = PropertiesManager.getInstance();
 

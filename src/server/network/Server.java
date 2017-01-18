@@ -8,7 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-
+/**
+ * Klasa odpowiadająca za operacje wykonywane z poziomu aplikacji serwera
+ */
 @SuppressWarnings("WeakerAccess")
 public abstract class Server implements SessionListener {
     private List<SecureSession> sessions;
@@ -29,6 +31,9 @@ public abstract class Server implements SessionListener {
         Log.print("Server started on port: " + port);
     }
 
+    /**
+     * Metoda odpowiadająca za uruchomienie wątku obsługującego tworzenie nowych sesji
+     */
     private void runConnectThread() {
         connectThread = new Thread(() -> {
             while(running){
@@ -54,6 +59,9 @@ public abstract class Server implements SessionListener {
         connectThread.start();
     }
 
+    /**
+     * Metoda odpowiadająca za uruchomienie wątku obsługującego tworzenie nowych sesji
+     */
     private void runMessageHandlingThread() {
         Thread messageHandling = new Thread(() -> {
             while(running){
@@ -73,6 +81,9 @@ public abstract class Server implements SessionListener {
 
     abstract void handleMessage(ClientMessage message);
 
+    /**
+     * Metoda odpowiadająca za wysyłanie wiadomości do odpowiedniego klienta
+     */
     void send(SessionId sessionId, ClientMessage message) {
         Optional<SecureSession> session = getSessionBySessionId(sessionId);
 

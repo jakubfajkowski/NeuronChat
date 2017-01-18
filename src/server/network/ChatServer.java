@@ -8,7 +8,11 @@ import common.util.UserCredentials;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
-
+/**
+ * Klasa która zawiera metody pozwalające wykonywać serwerowi aplikacji podstawowe zadania
+ * takie jak wysyłanie wiadomości, nasłuchiwanie na przyjście wiadomości, ich odbieranie,
+ * odpowiednią obsługę, czy logowania i rejestrowania użytkowników
+ */
 public class ChatServer extends Server {
     private AuthenticationService authenticationService;
 
@@ -23,6 +27,10 @@ public class ChatServer extends Server {
         runBroadcastUserListTimerTask();
     }
 
+    /**
+     * Metoda uruchamiająca timer odpowiedzialny za cykliczne wysyłanie userom
+     * aktualizacji listy dostępnych użytkoników
+     */
     private void runBroadcastUserListTimerTask() {
         broadcastUserListTimerTask = new TimerTask() {
             @Override
@@ -35,6 +43,10 @@ public class ChatServer extends Server {
         timer.schedule(broadcastUserListTimerTask, 0, 5000);
     }
 
+    /**
+     * Metoda wysyłająca do wszystkich użytkoników aktualizację tablicy
+     * dostępnych użytkowników
+     */
     private void broadcastUserList() {
         ClientMessage message = new ClientMessage(ClientMessageMode.AVAILABLE_USERS, null, null);
         ArrayList<User> users = new ArrayList<>();
@@ -44,6 +56,9 @@ public class ChatServer extends Server {
         sendToAll(message);
     }
 
+    /**
+     * Metoda wysyłająca wiadomość do wszystkich użytkowników
+     */
     private void sendToAll(ClientMessage message) {
         for (SessionId s: userSessionIdMap.values()) {
             send(s, message);
@@ -51,6 +66,9 @@ public class ChatServer extends Server {
         }
     }
 
+    /**
+     * Metoda odpowiadająca za obsługę wiadomości przychodzących do serwera
+     */
     @Override
     protected void handleMessage(ClientMessage message) {
         switch (message.getClientMessageMode()) {
@@ -66,6 +84,9 @@ public class ChatServer extends Server {
         }
     }
 
+    /**
+     * Metoda przekazująca wiadomość z serwera do użytkownika docelowego
+     */
     private void passMessage(ClientMessage message) {
         User user = (User) message.getAddressee();
         SessionId addresseeSessionId = userSessionIdMap.get(user);
@@ -73,6 +94,9 @@ public class ChatServer extends Server {
         send(addresseeSessionId, message);
     }
 
+    /**
+     * Metoda odpowiadająca za obsługę logowania użytkowników
+     */
     private void login(ClientMessage message) {
         UserCredentials userCredentials = (UserCredentials) message.getAddressee();
         User user = new User(userCredentials.getUsername());
@@ -94,6 +118,9 @@ public class ChatServer extends Server {
         send(sessionId, message);
     }
 
+    /**
+     * Metoda odpowiadająca za obsługę rejestrowania nowych użytkowników
+     */
     private void register(ClientMessage message) {
         UserCredentials userCredentials = (UserCredentials) message.getAddressee();
         User user = new User(userCredentials.getUsername());
@@ -112,6 +139,9 @@ public class ChatServer extends Server {
         send(sessionId, message);
     }
 
+    /**
+     * Metoda odpowiadająca za reakcję gdy połączenie serwer-klient zostanie zerwane
+     */
     @Override
     public void onSessionDisposed(Session session) {
         userSessionIdMap.values().remove(session.getSessionId());

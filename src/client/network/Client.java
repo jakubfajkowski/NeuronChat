@@ -11,7 +11,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 /**
- * Klasa odpowiadająca za operacje wykonywane z poziomu operacji klienckiej
+ * Klasa odpowiadająca za operacje wykonywane z poziomu aplikacji klienckiej
  */
 public abstract class Client {
     private SecureSession serverSession;
