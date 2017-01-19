@@ -107,7 +107,7 @@ public class MainController extends Controller implements ChatClientListener {
             case AVAILABLE_USERS:
                 onAvailableUsersReceived(message);
                 break;
-            case TEST_KEY:
+            case TEST_KEY_REQUEST:
                 onTestKeyReceived();
                 break;
         }

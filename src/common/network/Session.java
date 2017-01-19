@@ -36,9 +36,11 @@ public class Session {
                     ClientMessage message = (ClientMessage) in.readObject();
                     read(message);
                 }
-                catch (ClassCastException | StreamCorruptedException ignored) {}
+                catch (ClassCastException | StreamCorruptedException ignored) {
+                    Log.print("Session reading exception: " + ignored.getMessage());
+                }
                 catch (IOException | InterruptedException | ClassNotFoundException e) {
-                    Log.print("Session reading thread exception: " + e.getMessage());
+                    Log.print("Session reading exception: " + e.getMessage());
                     dispose();
                 }
             }
@@ -52,9 +54,10 @@ public class Session {
         messages.put(message);
     }
 
-    public void write(ClientMessage message) {
+    public synchronized void write(ClientMessage message) {
         try {
             out.writeObject(message);
+            Log.print(message.toString());
         } catch (IOException e) {
             Log.print("Session writing exception: " + e.getMessage());
         }
