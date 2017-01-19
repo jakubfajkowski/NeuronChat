@@ -49,7 +49,7 @@ public class SecureSession extends Session {
                 break;
             case TEST_KEY_REQUEST:
                 //trigger view update
-                super.read(new ClientMessage(ClientMessageMode.TEST_KEY_REQUEST, null, null));
+                super.read(ClientMessage.empty(ClientMessageMode.TEST_KEY_REQUEST));
                 onTestKeyRequestReceived(message);
                 write(message);
                 break;
@@ -58,6 +58,7 @@ public class SecureSession extends Session {
                 write(message);
                 break;
             case FINALIZE_KEY_NEGOTIATION:
+                super.read(ClientMessage.empty(ClientMessageMode.FINALIZE_KEY_NEGOTIATION));
                 onFinalizeKeyNegotiation(message);
                 break;
             case AVAILABLE_USERS:
@@ -100,7 +101,15 @@ public class SecureSession extends Session {
                 sendTestKeyResponse(message);
                 break;
             case FINALIZE_KEY_NEGOTIATION:
+                try {
+                    super.read(ClientMessage.empty(ClientMessageMode.FINALIZE_KEY_NEGOTIATION));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 onFinalizeKeyNegotiation(message);
+                break;
+            case FAIL_KEY_NEGOTIATION:
+                onFailKeyNegotiation(message);
                 break;
             case AVAILABLE_USERS:
                 break;
@@ -147,7 +156,7 @@ public class SecureSession extends Session {
                 lp.getL()
         );
 
-        synchronizing = true;
+        startSynchronizing();
     }
 
     private void sendKeyNegotiationRequest(ClientMessage message) {
@@ -251,7 +260,13 @@ public class SecureSession extends Session {
         else {
             Log.print("Session %s key test failed on %d iteration",
                     getSessionId(), treeParityMachine.getCounter());
-            message.setClientMessageMode(ClientMessageMode.KEY_NEGOTIATION_REQUEST);
+            if (synchronizing) {
+                message.setClientMessageMode(ClientMessageMode.KEY_NEGOTIATION_REQUEST);
+            }
+            else {
+                message.setClientMessageMode(ClientMessageMode.FAIL_KEY_NEGOTIATION);
+                message.setPayload(null);
+            }
         }
     }
 
@@ -260,9 +275,24 @@ public class SecureSession extends Session {
                 getSessionId(), DatatypeConverter.printHexBinary(treeParityMachine.generateKey()));
         message.setPayload(null);
         key = treeParityMachine.generateKey();
+        stopSynchronizing();
+    }
+
+    private void onFailKeyNegotiation(ClientMessage message) {
+        Log.print("Session %s key negotiation failed. Key is %s",
+                getSessionId(), DatatypeConverter.printHexBinary(key));
+        stopSynchronizing();
     }
 
     public TreeParityMachine getTreeParityMachine() {
         return treeParityMachine;
+    }
+
+    private void startSynchronizing() {
+        synchronizing = true;
+    }
+
+    public void stopSynchronizing() {
+        synchronizing = false;
     }
 }

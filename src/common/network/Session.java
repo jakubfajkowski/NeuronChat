@@ -57,7 +57,6 @@ public class Session {
     public synchronized void write(ClientMessage message) {
         try {
             out.writeObject(message);
-            Log.print(message.toString());
         } catch (IOException e) {
             Log.print("Session writing exception: " + e.getMessage());
         }

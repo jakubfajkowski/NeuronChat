@@ -108,7 +108,10 @@ public class MainController extends Controller implements ChatClientListener {
                 onAvailableUsersReceived(message);
                 break;
             case TEST_KEY_REQUEST:
-                onTestKeyReceived();
+                updateEncryptionTab();
+                break;
+            case FINALIZE_KEY_NEGOTIATION:
+                negotiateButton.setSelected(false);
                 break;
         }
     }
@@ -173,8 +176,8 @@ public class MainController extends Controller implements ChatClientListener {
         }
     }
 
-    private void onTestKeyReceived() {
-        TreeParityMachine tpm = client.getTreeParityMachine();
+    private void updateEncryptionTab() {
+        TreeParityMachine tpm = client.getServerSession().getTreeParityMachine();
         matrixTextField.setText(tpm.toString());
         keyTextField.setText(DatatypeConverter.printHexBinary(tpm.generateKey()));
     }
@@ -245,6 +248,9 @@ public class MainController extends Controller implements ChatClientListener {
             );
 
             client.sendInitializeKeyNegotiationRequest(lp);
+        }
+        else {
+            client.getServerSession().stopSynchronizing();
         }
     }
 

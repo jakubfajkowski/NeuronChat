@@ -28,7 +28,7 @@ public class ChatClient extends Client {
     protected void receiveMessage(ClientMessage message) {
         switch (message.getClientMessageMode()) {
             case INITIALIZE_SESSION:
-                setServerSessionId((SessionId) message.getPayload());
+                getServerSession().setSessionId((SessionId) message.getPayload());
                 sendInitializeKeyNegotiationRequest(new LearningParameters(
                         LearningRule.RANDOM_WALK,
                         4,
@@ -63,7 +63,7 @@ public class ChatClient extends Client {
         ClientMessage messageToSend = new ClientMessage(
                 ClientMessageMode.LOGIN,
                 userCredentials,
-                getServerSessionId()
+                getServerSession().getSessionId()
         );
         send(messageToSend);
     }
@@ -72,7 +72,7 @@ public class ChatClient extends Client {
         ClientMessage messageToSend = new ClientMessage(
                 ClientMessageMode.REGISTER,
                 userCredentials,
-                getServerSessionId()
+                getServerSession().getSessionId()
         );
         send(messageToSend);
     }

@@ -56,20 +56,11 @@ public abstract class Client {
         serverSession.dispose();
     }
 
-    protected void setServerSessionId(SessionId sessionId) {
-        serverSession.setSessionId(sessionId);
-    }
-
-    protected SessionId getServerSessionId() {
-        return serverSession.getSessionId();
+    public SecureSession getServerSession() {
+        return serverSession;
     }
 
     public Thread getMessageHandlingThread() {
         return messageHandlingThread;
-    }
-
-
-    public TreeParityMachine getTreeParityMachine() {
-        return serverSession.getTreeParityMachine();
     }
 }

@@ -24,6 +24,14 @@ public class ClientMessage implements Serializable {
         this.payload = payload;
     }
 
+    private ClientMessage(ClientMessageMode clientMessageMode) {
+        this.clientMessageMode = clientMessageMode;
+    }
+
+    public static ClientMessage empty(ClientMessageMode clientMessageMode) {
+        return new ClientMessage(clientMessageMode);
+    }
+
     public void encryptPayload(byte[] key) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         payload = Security.encryptObject(payload, key);
     }
