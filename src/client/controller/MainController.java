@@ -122,7 +122,7 @@ public class MainController extends Controller implements ChatClientListener {
 
         if (u.isPresent()) {
             UserListViewItem userListViewItem = u.get();
-            userListViewItem.appendChatHistory(message.toString());
+            userListViewItem.appendChatHistory(receivedChatMessage.toString());
 
             if (currentChatPartner != userListViewItem) {
                 enableNotification(userListViewItem);
